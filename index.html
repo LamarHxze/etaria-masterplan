@@ -450,6 +450,7 @@ const SYNERGIES = [
 ];
 
 // STATE
+let activeTab = 'status';
 let S = { checks:{}, prios:{}, impls:{} };
 try { const x=localStorage.getItem('etaria-v3'); if(x) S=JSON.parse(x); } catch(e){}
 function save(){ try{localStorage.setItem('etaria-v3',JSON.stringify(S))}catch(e){} }
@@ -467,12 +468,15 @@ function renderAll(){
   root.innerHTML = [
     renderStatus(), renderPhases(), renderPlan(), renderRetention(), renderPsycho(), renderSynergies()
   ].join('');
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
+  const active=document.querySelector(`.sec[data-s="${activeTab}"]`);
+  if(active) active.classList.add('vis');
   bind();
   updateProg();
 }
 
 function renderStatus(){
-  return `<div class="sec vis" data-s="status">
+  return `<div class="sec" data-s="status">
     <div class="sec-head"><div class="ico i-g">📊</div><h2>Server-Status</h2><span class="cnt">16 Plugins · 8 Systeme</span></div>
     <p class="sec-desc">Was auf Etaria.net tatsächlich läuft. Daten aus eurem Plugin-Code.</p>
     <div class="grid">${STATUS.map(s=>`
@@ -584,10 +588,11 @@ function updateProg(){
 
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
+    activeTab=btn.dataset.t;
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
-    document.querySelector(`.sec[data-s="${btn.dataset.t}"]`).classList.add('vis');
+    document.querySelector(`.sec[data-s="${activeTab}"]`).classList.add('vis');
   });
 });
 
