@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etaria.net – Masterplan</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#07090d;--surface:#0c0f15;--card:#10141c;--border:#192030;--border-h:#263045;
+  --amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--green:#10b981;--purple:#a855f7;--cyan:#06b6d4;--pink:#ec4899;
+  --text:#dfe6f0;--text-m:#8896ab;--text-d:#445068;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Chakra Petch',sans-serif;line-height:1.55}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:3px}
+.app{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 5rem}
+
+.hdr{text-align:center;padding:2.5rem 0 2rem;border-bottom:1px solid var(--border);margin-bottom:0}
+.hdr .tag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--amber);border:1px solid rgba(245,158,11,.25);padding:.3em 1em;border-radius:2px;display:inline-block;margin-bottom:1rem}
+.hdr h1{font-size:clamp(1.8rem,4.5vw,3rem);font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,#fff 30%,var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:var(--text-d);font-size:.85rem;margin-top:.4rem;font-weight:300}
+
+.nav{position:sticky;top:0;z-index:100;background:rgba(7,9,13,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);margin:0 -1.25rem;padding:0 1.25rem}
+.nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-btn{font-family:'Chakra Petch',sans-serif;font-size:.72rem;font-weight:600;color:var(--text-d);background:none;border:none;padding:.85rem 1rem;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.25s}
+.nav-btn:hover{color:var(--text-m)}
+.nav-btn.active{color:var(--amber);border-bottom-color:var(--amber)}
+
+.prog{margin:1.5rem 0;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.3rem}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.prog-top h3{font-size:.78rem;font-weight:600}
+.prog-top .pct{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--amber);font-weight:600}
+.prog-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--amber),#fbbf24);border-radius:3px;transition:width .5s;width:0%}
+.prog-stats{display:flex;gap:1.2rem;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-d)}
+
+.sec{margin-top:2rem;display:none}
+.sec.vis{display:block}
+.sec-head{display:flex;align-items:center;gap:.65rem;margin-bottom:1.25rem}
+.sec-head .ico{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.sec-head h2{font-size:1.05rem;font-weight:700}
+.sec-head .cnt{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-d);background:var(--card);border:1px solid var(--border);padding:.15em .55em;border-radius:3px;margin-left:auto}
+.sec-desc{color:var(--text-m);font-size:.8rem;margin:-1rem 0 1.25rem;line-height:1.6}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.7rem}
+.grid-sm{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.grid-1{grid-template-columns:1fr}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:1.2rem;position:relative;overflow:hidden;transition:.25s}
+.card:hover{border-color:var(--border-h);transform:translateY(-1px)}
+.card .bar{position:absolute;top:0;left:0;right:0;height:2px}
+.card .head{display:flex;align-items:center;gap:.55rem;margin-bottom:.5rem}
+.card .emoji{font-size:1.15rem;line-height:1}
+.card .meta{display:flex;flex-direction:column}
+.card .cat{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-d)}
+.card h4{font-size:.88rem;font-weight:700}
+.card p{font-size:.78rem;color:var(--text-m);line-height:1.6}
+.card .detail{font-size:.72rem;color:var(--text-m);line-height:1.55;margin-top:.4rem}
+.card .tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.6rem}
+.pill{font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:.15em .55em;border-radius:3px;border:1px solid;white-space:nowrap}
+
+.status-row{display:flex;align-items:center;justify-content:space-between;margin-top:.75rem;padding-top:.65rem;border-top:1px solid var(--border);gap:.5rem;flex-wrap:wrap}
+.prio-btns{display:flex;gap:.25rem}
+.pbtn{font-family:'JetBrains Mono',monospace;font-size:.58rem;padding:.25em .6em;border:1px solid var(--border);border-radius:3px;background:none;color:var(--text-d);cursor:pointer;transition:.2s}
+.pbtn:hover{border-color:var(--border-h);color:var(--text-m)}
+.pbtn.s-h{background:rgba(16,185,129,.1);border-color:var(--green);color:var(--green)}
+.pbtn.s-m{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber)}
+.pbtn.s-l{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.chk{display:flex;align-items:center;gap:.35rem;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-d);cursor:pointer;user-select:none}
+.chk .box{width:14px;height:14px;border:1.5px solid var(--border-h);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.55rem;transition:.2s;flex-shrink:0}
+.chk.on .box{background:var(--green);border-color:var(--green);color:#000}
+
+.tl{position:relative;padding-left:2.2rem}
+.tl::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.ph{position:relative;margin-bottom:1rem}
+.ph .dot{position:absolute;left:-2.2rem;top:1.3rem;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.52rem;font-weight:600;z-index:1;transition:.3s}
+.ph.done .dot{background:var(--green);border-color:var(--green);color:#000}
+.ph .card{margin:0}
+.ph .ptop{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.35rem}
+.ph .time{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-d);background:var(--surface);border:1px solid var(--border);padding:.15em .5em;border-radius:3px;white-space:nowrap}
+.ph .goal{font-size:.72rem;color:var(--amber);font-weight:600;margin-bottom:.35rem}
+.cklist{margin-top:.6rem;display:flex;flex-direction:column;gap:.25rem}
+.ck{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--text-m);cursor:pointer;padding:.25rem 0;user-select:none;transition:.2s}
+.ck:hover{color:var(--text)}
+.ck.on{color:var(--text-d);text-decoration:line-through}
+.ck .box{width:15px;height:15px;border:1.5px solid var(--border-h);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.55rem;transition:.2s}
+.ck.on .box{background:var(--green);border-color:var(--green);color:#000}
+
+.syn{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:1rem 1.15rem;transition:.25s}
+.syn:hover{border-color:var(--border-h)}
+.syn .st{font-size:.78rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.syn p{font-size:.73rem;color:var(--text-m);line-height:1.55}
+
+/* Tip cards */
+.tip{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:1.1rem 1.2rem;transition:.25s}
+.tip:hover{border-color:var(--border-h)}
+.tip .tip-head{font-size:.82rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.45rem}
+.tip .tip-num{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--text-d);background:var(--surface);border:1px solid var(--border);width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.tip p{font-size:.75rem;color:var(--text-m);line-height:1.6}
+.tip .tip-action{margin-top:.5rem;font-size:.72rem;color:var(--green);font-weight:600}
+
+.exists{font-family:'JetBrains Mono',monospace;font-size:.5rem;background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25);padding:.1em .45em;border-radius:2px;margin-left:.35rem}
+.missing{font-family:'JetBrains Mono',monospace;font-size:.5rem;background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25);padding:.1em .45em;border-radius:2px;margin-left:.35rem}
+.partial{font-family:'JetBrains Mono',monospace;font-size:.5rem;background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.25);padding:.1em .45em;border-radius:2px;margin-left:.35rem}
+
+.c-a{color:var(--amber)}.c-r{color:var(--red)}.c-b{color:var(--blue)}.c-g{color:var(--green)}.c-p{color:var(--purple)}.c-c{color:var(--cyan)}
+.bg-a{background:var(--amber)}.bg-r{background:var(--red)}.bg-b{background:var(--blue)}.bg-g{background:var(--green)}.bg-p{background:var(--purple)}.bg-c{background:var(--cyan)}
+.i-a{background:rgba(245,158,11,.12);color:var(--amber)}
+.i-r{background:rgba(239,68,68,.1);color:var(--red)}
+.i-b{background:rgba(59,130,246,.1);color:var(--blue)}
+.i-g{background:rgba(16,185,129,.1);color:var(--green)}
+.i-p{background:rgba(168,85,247,.1);color:var(--purple)}
+.i-c{background:rgba(6,182,212,.1);color:var(--cyan)}
+.t-a{color:var(--amber);border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.08)}
+.t-r{color:var(--red);border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.08)}
+.t-b{color:var(--blue);border-color:rgba(59,130,246,.25);background:rgba(59,130,246,.08)}
+.t-g{color:var(--green);border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.08)}
+.t-p{color:var(--purple);border-color:rgba(168,85,247,.25);background:rgba(168,85,247,.08)}
+.t-c{color:var(--cyan);border-color:rgba(6,182,212,.25);background:rgba(6,182,212,.08)}
+
+@media(max-width:700px){
+  .app{padding:1rem 1rem 4rem}
+  .grid,.grid-sm{grid-template-columns:1fr}
+  .nav-btn{padding:.75rem .7rem;font-size:.68rem}
+  .prog-stats{flex-wrap:wrap;gap:.6rem}
+  .status-row{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<header class="hdr">
+  <div class="tag">Paper 1.21+ · 16 Custom Plugins</div>
+  <h1>Etaria.net Masterplan</h1>
+  <p class="sub">Status · Spieler-Reise · Bauplan · Retention · Psychologie</p>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" data-t="status">📊 Status</button>
+    <button class="nav-btn" data-t="phasen">📅 Spieler-Phasen</button>
+    <button class="nav-btn" data-t="plan">🔨 Bauplan</button>
+    <button class="nav-btn" data-t="retention">🧲 Retention-Tipps</button>
+    <button class="nav-btn" data-t="psycho">🧠 Psychologie</button>
+    <button class="nav-btn" data-t="synergien">🔗 Synergien</button>
+  </div>
+</nav>
+
+<div class="prog">
+  <div class="prog-top"><h3>📊 Umsetzung</h3><span class="pct" id="pPct">0%</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+  <div class="prog-stats"><span id="pDone">0 erledigt</span><span>·</span><span id="pAll">0 Aufgaben</span></div>
+</div>
+
+<div id="sections"></div>
+</div>
+
+<script>
+const STATUS = [
+  {
+    id:"jobs", icon:"⚒️", title:"Jobs", cat:"Wirtschaft", color:"a",
+    status:"exists",
+    desc:"3 Jobs (Bergarbeiter, Holzfäller, Fischer). Max Level 100, ~50h Grind pro Job. Custom Enchants ab Lv10 (Laubzerfall, Magnetisch, Autoschmelze, Tunnelgräber, Kettenfällung, Adernabbau). Stündliches Geld-Limit (100-250$/h je Level).",
+    details:"Anti-Farm trackt platzierte Blöcke. XP-Booster kaufbar (2x/4x/6x). Fischer hat Timing-Minigame. Schatzglück-Enchant hat eigene Loot-Table mit 12 Items.",
+    tags:["3 Jobs","Lv100","11 Enchants","Anti-Farm"]
+  },
+  {
+    id:"waffen", icon:"🔫", title:"Waffensystem", cat:"PvP / Kampf", color:"r",
+    status:"exists",
+    desc:"21 GTA-V-Style Waffen mit Custom Models. Pistolen, SMGs, Gewehre, Shotguns, Sniper, RPG, Minigun, Flammenwerfer. 3 Granaten-Typen. Eigenes Rüstungssystem das Vanilla überschreibt (max 80% Schutz).",
+    details:"DPS-Range: Pistole 7.5 → Minigun 50.0. Monster 50x Schaden. Haltbarkeit sinkt pro Schuss. 7 Munitionstypen. Kopfschuss-System. Materialzerstörung bei starken Waffen.",
+    tags:["21 Waffen","Granaten","Custom Rüstung","⚠️ Muni nur Admin"]
+  },
+  {
+    id:"crates", icon:"🎰", title:"LuckyCrates", cat:"Loot", color:"p",
+    status:"partial",
+    desc:"1 Crate konfiguriert (Waffenkiste, 21 Waffen). Roulette + CSGO Animation. Fragment-System: Zombies droppen Fragmente (3%), 5 Fragmente = 1 Key. Verwerter recyclet doppelte Waffen zurück in Keys.",
+    details:"Rarität: Gewöhnlich (>10%) bis Mystisch (<0.2%). Minigun = 0.048%. System unterstützt beliebig viele Crates, nur 1 ist konfiguriert.",
+    tags:["1 Crate","Fragmente","Recycler","⚠️ Nur Waffen-Loot"]
+  },
+  {
+    id:"growing", icon:"🌿", title:"Drogen (Cannabis)", cat:"Wirtschaft", color:"g",
+    status:"partial",
+    desc:"Cannabis auf Wasserkesseln anbauen. 60 Min Wachstum (36 mit Dünger). Ernte (3-8 Stück) → Ofen trocknen → mit Tüte verpacken → im Shop verkaufen. Umfassender Pflanzenschutz.",
+    details:"2 Dünger-Typen (Speed -40%, Menge +3). Nur 1 Pflanze (Cannabis). Kein Konsum-Effekt, kein Polizei-System, kein Risiko.",
+    tags:["1 Pflanze","Verarbeitungskette","⚠️ Kein Risiko","⚠️ Kein Konsum"]
+  },
+  {
+    id:"clan", icon:"⚔️", title:"Clan-System", cat:"Social", color:"b",
+    status:"exists",
+    desc:"Kostenlos erstellen. 5 Mitglieder Start, erweiterbar (1.000$/Slot). 5 Ränge. Clan-Bank mit Ein-/Auszahlung. Clan-Chat + Allianz-Chat. Max 1 Allianz pro Clan. Browse-GUI.",
+    details:"Friendly Fire togglebar. DB-Felder für Upkeep und Member-Fee existieren, sind aber NICHT aktiv implementiert.",
+    tags:["Clan-Bank","Allianzen","⚠️ Kein Upkeep","⚠️ Keine Wars"]
+  },
+  {
+    id:"chunks", icon:"🏗️", title:"Chunk-Claiming", cat:"Base Building", color:"c",
+    status:"exists",
+    desc:"Erster Claim gratis, danach exponentiell (+10% pro Claim). Claim-Gruppen (Basis, Farm, Mine etc.). Freunde-System mit 4 Permissions. Partikel-Visualisierung. Umfassender Schutz gegen alles.",
+    details:"Max Claims: 3 (Default) bis 25 (MVP+). Keine laufenden Kosten – Claims bleiben permanent.",
+    tags:["Exponentiell","Gruppen","⚠️ Keine Wartungskosten"]
+  },
+  {
+    id:"pvp", icon:"💀", title:"PvP / Combat", cat:"Kampf", color:"r",
+    status:"partial",
+    desc:"60s Combat-Tag. Befehle blockiert im Kampf. Combat-Logout = sofortiger Tod + Broadcast. Kein KeepInventory – alles droppt. PvP-Zonen mit sichtbaren Grenzen (rotes Schwert-Symbol).",
+    details:"Kein Kill-Reward. Kein Bounty. Respawn immer am Spawn (Betten überschrieben). PvP hat aktuell keinen Anreiz außer Griefing.",
+    tags:["Combat-Tag","Full Loot","⚠️ Kein Kill-Reward","⚠️ Kein Bounty"]
+  },
+  {
+    id:"misc", icon:"📱", title:"Weitere Systeme", cat:"QoL", color:"a",
+    status:"exists",
+    desc:"Handy (GUI-Menü Slot 8), NPCs (Fake-Spieler + 3D-Models), Rucksack (6 Stufen, 9-54 Slots), Home/TPA/RTP, Tutorial (3 Schritte), Chat-Filter, 16 Ränge, Scoreboard.",
+    details:"6 Zombie-Typen: Normal 94%, Exploder, Tank, Horde Mother, Jumper, Shooter. Alle brennen nicht bei Tag. 3% Fragment-Drop.",
+    tags:["Handy","NPCs","Rucksack","6 Zombie-Typen","Tutorial"]
+  }
+];
+
+const PHASES = [
+  {
+    num:1, title:"Ankunft", time:"Min 0–30",
+    goal:"Spieler versteht Etaria und hat seinen ersten Kill.",
+    text:"Tutorial existiert bereits: Zombie-Kampf mit Tutorial-Pistole → Cannabis-Samen pflanzen → Server-Tour (Händler, Crate, Job wählen, RTP in Survival-Welt). Der Hook muss in den ersten 10 Minuten sitzen.",
+    checks:[
+      {t:"Tutorial läuft fehlerfrei durch (alle 3 Schritte)", k:"p1-tut"},
+      {t:"Spieler hat nach Tutorial eine Waffe + Munition", k:"p1-gun"},
+      {t:"Job-Auswahl ist klar erklärt", k:"p1-job"},
+      {t:"Spieler wird in die Survival-Welt geleitet", k:"p1-rtp"},
+      {t:"Erster Zombie-Kill fühlt sich befriedigend an", k:"p1-feel"}
+    ]
+  },
+  {
+    num:2, title:"Aufbau", time:"Tag 1–3",
+    goal:"Base claimen, Job leveln, Cannabis anbauen, erste Crate öffnen.",
+    text:"Spieler claimed ersten Chunk (gratis), baut Base. Wählt Job und farmt (100$/h Limit am Anfang). Pflanzt Cannabis. Sammelt Fragmente von Zombies (3% Drop) → 5 Frags = 1 Key → erste Waffenkiste öffnen.",
+    checks:[
+      {t:"Claim-System ist erklärt (Tutorial oder Schilder)", k:"p2-claim"},
+      {t:"Geld-Verdienst fühlt sich fair an", k:"p2-money"},
+      {t:"Cannabis-Kreislauf funktioniert und ist profitabel", k:"p2-grow"},
+      {t:"Fragment-Grind motiviert (nicht zu lang, nicht zu kurz)", k:"p2-frag"},
+      {t:"Spieler hat ersten sozialen Kontakt (Clan/Chat/Handel)", k:"p2-social"}
+    ]
+  },
+  {
+    num:3, title:"Spezialisierung", time:"Tag 3–7",
+    goal:"Custom Enchants, Clan beitreten, Nische finden.",
+    text:"Job Lv10+ → erste Enchants (Laubzerfall, Magnetisch etc.). Cannabis-Verkauf bringt gutes Geld. Genug Keys für mehrere Crates. HIER passiert normalerweise der Absprung – der Spieler muss das Gefühl haben, erst am Anfang zu sein.",
+    checks:[
+      {t:"Enchant-Shop ist auffindbar und verständlich", k:"p3-ench"},
+      {t:"Clan-Beitritt wird aktiv gefördert/empfohlen", k:"p3-clan"},
+      {t:"Es gibt Gruppen-Content der Solo schwer ist", k:"p3-coop"},
+      {t:"Spieler hat täglichen Login-Grund", k:"p3-daily"},
+      {t:"Nächstes großes Ziel ist sichtbar (Lv50 Enchant, seltene Waffe)", k:"p3-goal"}
+    ]
+  },
+  {
+    num:4, title:"Langzeit", time:"Woche 2+",
+    goal:"Tägliche Gründe, Events, Clan-Rivalitäten.",
+    text:"Hier stirbt der Server aktuell. Keine Events, keine Kill-Rewards, kein Bounty, keine Clan-Kriege, keine Airdrops. Ein Spieler der alles gesehen hat, hat keinen Grund zurückzukommen.",
+    checks:[
+      {t:"Automatische Events (Airdrops, Bosse) laufen", k:"p4-events"},
+      {t:"Kill-Rewards machen PvP lohnend", k:"p4-kill"},
+      {t:"Bounty-System erzeugt Rivalitäten", k:"p4-bounty"},
+      {t:"Wöchentlicher/Monatlicher Content-Zyklus existiert", k:"p4-cycle"},
+      {t:"Ranglisten und Wettbewerb sind sichtbar", k:"p4-rank"}
+    ]
+  }
+];
+
+const PLAN = [
+  {
+    id:"munition", icon:"🔫", title:"Munitions-Beschaffung", cat:"⚠️ KRITISCH · Wirtschaft", color:"r",
+    desc:"Munition und Reparatur gehen aktuell NUR per Admin-Command. Ohne spielerische Muni-Quelle ist das ganze Waffensystem für normale Spieler kaputt.",
+    impl:"Munition im Admin-Shop kaufbar (z.B. Pistole 15$, Gewehr 40$, Sniper 80$ pro Magazin). Alternativ craftbar: Eisen + Redstone → Pistolen-Muni. Reparatur per NPC-Schmied gegen Geld + Materialien.",
+    tags:["⚠️ KRITISCH","Wirtschaft","Gold-Sink"], effort:"Hoch"
+  },
+  {
+    id:"killrew", icon:"💰", title:"Kill-Rewards", cat:"⚠️ KRITISCH · PvP", color:"r",
+    desc:"PvP hat aktuell keinen Anreiz. Spieler verlieren Items beim Tod, aber der Killer bekommt nichts extra. Das macht PvP zu reinem Griefing statt echtem Content.",
+    impl:"Bei Kill: Killer bekommt 10-25% des Bargelds vom Opfer + Chance auf Fragment. Anti-Abuse: Gleichen Spieler nur 1x pro Stunde belohnen. Kill-Nachricht im Chat mit Betrag.",
+    tags:["⚠️ KRITISCH","PvP","Motivation"], effort:"Mittel"
+  },
+  {
+    id:"events", icon:"📡", title:"Automatische Events", cat:"⚠️ KRITISCH · Retention", color:"b",
+    desc:"KEINE automatischen Events vorhanden. Das ist einer der Hauptgründe warum es keine Langzeit-Bindung gibt. Spieler brauchen wiederkehrende Höhepunkte.",
+    impl:"Airdrops: Alle 2-4h random in Survival. Broadcast mit Coords. Loot: Waffen, Muni, Keys, seltene Items. Zombies spawnen drum rum. PvP erlaubt am Airdrop. Boss-Event: 1x pro Woche, braucht 3+ Spieler.",
+    tags:["⚠️ KRITISCH","Retention","PvP-Hotspot"], effort:"Hoch"
+  },
+  {
+    id:"bounty", icon:"🎯", title:"Bounty-System", cat:"PvP / Social", color:"r",
+    desc:"Kopfgeld auf andere Spieler setzen. Erzeugt Rivalitäten, Rache-Geschichten und gibt Solo-PvP-Spielern ein Ziel. Gleichzeitig Gold-Sink.",
+    impl:"/bounty <spieler> <betrag> – Geld wird abgezogen, stapelt sich. Killer bekommt alles. Broadcast bei hohem Bounty (>1.000$). /bounty list zeigt aktive Kopfgelder. NPC 'Kopfgeldjäger' am Spawn.",
+    tags:["PvP","Gold-Sink","Stories"], effort:"Mittel"
+  },
+  {
+    id:"streak", icon:"🔥", title:"Daily Login Streak", cat:"Retention", color:"a",
+    desc:"Tägliche Belohnungen die besser werden. Streak pausiert bei verpasstem Tag, resettet nicht. Einfachster Weg, tägliche Logins zu erhöhen.",
+    impl:"Tag 1: 50$. Tag 3: 150$. Tag 7: 500$ + Fragment. Tag 14: 1.500$ + 2 Fragmente. Tag 30: 5.000$ + Key. /daily oder NPC. Streak im Scoreboard sichtbar. Milestone-Broadcasts.",
+    tags:["Retention","Fair","Einfach umzusetzen"], effort:"Niedrig"
+  },
+  {
+    id:"schwarzmarkt", icon:"🕶️", title:"Schwarzmarkt-NPC", cat:"Wirtschaft / Retention", color:"a",
+    desc:"NPC mit wechselndem Angebot alle paar Stunden. Seltene Items, Munition, Spezial-Dünger – teuer, aber exklusiv. Wer offline ist, verpasst es.",
+    impl:"NPC am Spawn. Rotation alle 3-4h, 4 Items aus Pool von ~30. Hohe Preise (Gold-Sink). Timer sichtbar wann nächste Rotation. Broadcast bei neuem Angebot. Limitierte Stückzahl pro Spieler.",
+    tags:["FOMO","Gold-Sink","Check-in"], effort:"Mittel"
+  },
+  {
+    id:"crafting", icon:"⚔️", title:"Waffen-Crafting", cat:"Progression", color:"p",
+    desc:"Waffen kommen nur aus der Waffenkiste. Basis-Waffen (Pistole, Micro SMG) sollten craftbar sein. Seltene bleiben Crate-exklusiv. Erzwingt Job-Zusammenarbeit.",
+    impl:"Waffen-Werkbank (NPC oder Custom Block). Pistole = 10 Eisen + 3 Redstone + 500$. SMG = 20 Eisen + 5 Gold + 1.500$. Materialien aus verschiedenen Jobs → Bergarbeiter liefert Erze, Holzfäller Griffe.",
+    tags:["Crafting","Job-Abhängigkeit","Progression"], effort:"Hoch"
+  },
+  {
+    id:"mehr-crates", icon:"🎰", title:"Mehr Crate-Typen", cat:"Loot", color:"p",
+    desc:"Nur 1 Crate existiert, das System kann mehr. Rüstungs-Kiste, Vorrats-Kiste, Kosmetik-Kiste würden Vielfalt und neue Ziele bringen.",
+    impl:"Rüstungs-Kiste: Verzauberte Rüstungsteile (Eisen bis Netherite). Vorrats-Kiste: Ressourcen, Geld, Booster. Eigene Fragment-Typen pro Crate von verschiedenen Quellen (z.B. Fischen, Events).",
+    tags:["System existiert","Vielfalt","Neue Ziele"], effort:"Niedrig"
+  },
+  {
+    id:"clanwar", icon:"⚔️", title:"Clan-Kriege", cat:"Clan / PvP", color:"b",
+    desc:"Clans haben keinen echten Zweck außer Chat. Clan-Wars geben dem System einen Sinn und erzeugen die Rivalitäten die Langzeit-Spieler halten.",
+    impl:"/clan war <clan> – Challenge. Bei Annahme: Kill-Score über 3-7 Tage. Gewinner bekommt Geld/Ressourcen aus Clan-Banks beider Seiten. War-Rangliste. Broadcasts bei wichtigen Kills.",
+    tags:["Clan-Content","Rivalität","Langzeit"], effort:"Hoch"
+  },
+  {
+    id:"upkeep", icon:"🏚️", title:"Claim-Wartung + Clan-Upkeep", cat:"Wirtschaft", color:"g",
+    desc:"Claims kosten nichts nach Kauf, Clan-Upkeep ist deaktiviert (DB-Felder existieren). Beides aktivieren = Verlustaversion + Gold-Sink + Login-Grund.",
+    impl:"Claim: 5-20$/Tag pro Chunk. Nicht bezahlt → Warnung → nach 7 Tagen Auflösung. Clan: Tägliche Kosten aus Clan-Bank (50$ × Mitglieder). Die DB-Felder sind schon da, nur Logik fehlt.",
+    tags:["DB existiert","Verlustaversion","Gold-Sink"], effort:"Niedrig"
+  },
+  {
+    id:"konsum", icon:"💊", title:"Drogen-Konsum + neue Pflanzen", cat:"Content", color:"g",
+    desc:"Cannabis hat kein Konsum-Feature und kein Risiko. Neue Pflanzen + Effekte machen das System tiefer und geben PvP-Spielern Buffs zum Farmen.",
+    impl:"Cannabis-Konsum: Speed II + Stärke I für 60s, danach Nausea 10s. Neue Pflanze 'Meth': Haste III für 45s. 'Pilze': Nightvision + Jump Boost. Verschiedene Kessel-Farben je Pflanze. Optionales Risiko: NPC-Razzia.",
+    tags:["Neue Pflanzen","PvP-Buffs","Content-Tiefe"], effort:"Mittel"
+  },
+  {
+    id:"ruf", icon:"⭐", title:"Ruf-System", cat:"Progression / Status", color:"c",
+    desc:"Kein Weg sich spielerisch abzuheben. Ruf durch Kills, Handel, Events gibt Spielern sichtbaren Status und schaltet Vorteile frei.",
+    impl:"+5 Ruf/Kill, +1/Handel, +10/Event. Stufen: Unbekannt → Bekannt → Berüchtigt → Legendär. Freischaltungen: Titel im Chat, NPC-Rabatte, Schwarzmarkt-Zugang, exklusive Crate. Rangliste /ruf top.",
+    tags:["Status","Identität","Langzeit"], effort:"Mittel"
+  },
+  {
+    id:"handelssteuer", icon:"💰", title:"Handelssteuer", cat:"Clan-Wirtschaft", color:"g",
+    desc:"Wenn Spieler handeln, geht ein Prozent in die Clan-Bank. Aktive Händler stärken ihren Clan direkt. Gibt dem Wirtschaftssystem mehr Tiefe.",
+    impl:"5-10% Steuer auf /pay und Shop-Transaktionen fließt in Clan-Bank des Käufers. Clan ohne Mitglied-in-Clan: Steuer geht an Server (verschwindet = Gold-Sink). Clan-Rangliste nach Umsatz.",
+    tags:["Clan-Benefit","Gold-Sink","Wirtschaft"], effort:"Niedrig"
+  }
+];
+
+const RETENTION = [
+  {
+    num:1, title:"Die ersten 30 Sekunden entscheiden", color:"r",
+    text:"Ein Spieler entscheidet in unter einer Minute ob er bleibt. Euer Tutorial existiert – aber der allererste Moment muss krachen. Der Spawn muss visuell beeindrucken, der erste NPC muss sofort klar machen was das hier ist. Kein langer Text, keine 10 Schilder.",
+    action:"→ Spawn visuell überarbeiten. Erster NPC sagt 1 Satz: 'Willkommen in der Endzeit. Schnapp dir eine Waffe.' Fertig."
+  },
+  {
+    num:2, title:"Vermeide den Tag-3-Tod", color:"a",
+    text:"Die meisten Spieler hören zwischen Tag 2 und Tag 5 auf – genau wenn sie die Grundmechaniken verstanden haben. Das ist der Punkt wo sie denken 'Okay, das wars'. Ihr braucht genau HIER den nächsten Hook: etwas das sich gerade erst öffnet.",
+    action:"→ Ab Tag 3 muss etwas Neues passieren: Erste Custom Enchants (Lv10), erster Airdrop sichtbar, erste Clan-Einladung, Schwarzmarkt wird zugänglich."
+  },
+  {
+    num:3, title:"Spieler halten Spieler", color:"b",
+    text:"Der #1 Grund warum Leute auf einem Server bleiben sind ANDERE SPIELER, nicht Features. Jeder Spieler der in einem aktiven Clan ist, hat 3x höhere Retention. Alles was Spieler zusammenbringt oder gegeneinander aufstellt, ist mehr wert als jedes neue Item.",
+    action:"→ Solo-Content begrenzen. Clan-Beitritt aktiv fördern (Bonus für Clans, Clan-exklusiver Content). Events die Gruppen brauchen."
+  },
+  {
+    num:4, title:"Mehrere Login-Gründe pro Tag", color:"a",
+    text:"Ein Daily-Reward allein reicht nicht. Ihr braucht Gründe zu verschiedenen Uhrzeiten: Morgens Daily abholen, Mittags Schwarzmarkt checken, Abends Event. Je mehr verschiedene Hooks, desto öfter loggt jemand ein.",
+    action:"→ Daily Streak + Schwarzmarkt-Rotation alle 3-4h + Airdrop alle 2-4h + abendliches Event = 3-4 Login-Gründe pro Tag."
+  },
+  {
+    num:5, title:"Verluste motivieren stärker als Gewinne", color:"r",
+    text:"Menschen kämpfen härter um etwas zu behalten als um etwas Neues zu bekommen. Aktuell kann auf Etaria.net nichts passiv verloren gehen. Claims bleiben ewig, Clan-Bank wächst nur, nichts verfällt. Es gibt keinen Druck.",
+    action:"→ Claim-Wartung, Clan-Upkeep, zeitlich begrenzte Titel/Ränge. Nicht brutal, aber spürbar. 'Wenn ich 3 Tage nicht einlogge, verliere ich meinen Claim' ist ein stärkerer Anreiz als jedes Geschenk."
+  },
+  {
+    num:6, title:"Sichtbarer Fortschritt überall", color:"g",
+    text:"Spieler müssen jederzeit sehen wie weit sie sind und was als nächstes kommt. Job-Level ist gut, aber es muss mehr geben. Ruf-Stufe, Streak-Counter, Clan-Rang, Kill-Statistik – alles sichtbar im Scoreboard, Tab oder Chat-Prefix.",
+    action:"→ Scoreboard erweitern: Job-Level, Streak, Ruf, Clan-Rang. Tab-Liste: Sortiert nach Ruf oder Level. Chat zeigt Rang + Ruf-Titel."
+  },
+  {
+    num:7, title:"Vorhersehbarkeit ist der Feind", color:"p",
+    text:"Wenn ein Spieler genau weiß was als nächstes passiert, wird es langweilig. LuckyCrates nutzen das Zufallsprinzip – aber nur dort. Jobs geben fixe Beträge, Cannabis gibt fixe Ernte, Zombies droppen immer gleich. Mehr Zufall = mehr Suchtpotential.",
+    action:"→ Seltene Events bei Cannabis-Ernte (Bonus-Drop). Zombie-Loot variieren. Schwarzmarkt-Items sind unvorhersehbar. Airdrop-Loot ist random. Fischer fangen manchmal Flaschenpost mit Schatzkoordinaten."
+  },
+  {
+    num:8, title:"Geschichten erzählen sich selbst", color:"b",
+    text:"Die besten Server-Momente sind nicht gescriptet – sie passieren wenn Systeme aufeinander treffen. Ein Clan setzt Bounty auf einen Rivalen, der Rivale wird beim Airdrop gejagt, es gibt eine 3-Clan-Schlacht. DAS erzählen Spieler ihren Freunden.",
+    action:"→ Bounty + Airdrops + Clan-Wars zusammen erzeugen diese Momente. Broadcasts bei großen Events ('CLAN X hat CLAN Y im Krieg besiegt!'). Kill-Feed im Chat."
+  },
+  {
+    num:9, title:"Neue Spieler-Onboarding nie aufhören", color:"c",
+    text:"Jeder Server stirbt wenn keine neuen Spieler nachkommen. Aber neue Spieler die auf einen etablierten Server kommen fühlen sich verloren. Der Skill- und Ausrüstungs-Gap darf nicht unüberwindbar sein.",
+    action:"→ Starter-Kit mit Basis-Waffe + Muni. Neue Spieler bekommen 7 Tage Schutz auf Claims (kein Raid). Günstige Basis-Waffen craftbar. Catch-up-Mechanik: Erste 10 Job-Level gehen schnell."
+  },
+  {
+    num:10, title:"Content-Kalender einführen", color:"a",
+    text:"Spieler müssen wissen WANN etwas passiert. Ein fester Wochenplan (Montag: Boss-Event, Mittwoch: PvP-Turnier, Freitag: Doppel-XP, Sonntag: Airdrop-Marathon) gibt dem Server Rhythmus und Gewohnheit.",
+    action:"→ Fester Wochenplan + saisonale Events (monatliche Challenges). Ankündigung über Discord + In-Game. Exklusive Rewards die nur bei Events droppbar sind."
+  }
+];
+
+const PSYCHO = [
+  {
+    icon:"⏳", title:"Sunk-Cost-Effekt", color:"a",
+    problem:"Alles ist in wenigen Tagen erreichbar. Job Lv100 = ~50h, danach Schluss. Kein Prestige, keine Langzeit-Ziele. Nichts das man 'ungern zurücklassen' würde.",
+    fix:"Prestige-System für Jobs. Waffen-Crafting das Wochen dauert. Ruf-System das über Monate wächst. Clan-Projekte die gemeinsam gebaut werden. Je mehr investiert, desto schwerer geht man."
+  },
+  {
+    icon:"👥", title:"Soziale Bindung", color:"b",
+    problem:"Clan-System existiert, aber Clans haben keinen Zweck außer Chat + FF-Toggle. Kein Content der Teamwork erzwingt. Kein Grund, im Clan aktiv zu sein.",
+    fix:"Clan-Wars, Clan-Upkeep (Mitglieder müssen aktiv sein), Handelssteuer → Clan-Bank, Boss-Events die 3+ Spieler brauchen, Gebietskontrolle. Clans brauchen einen GRUND zu existieren."
+  },
+  {
+    icon:"📉", title:"Verlustaversion", color:"r",
+    problem:"Claims kosten nach Kauf nichts. Clan-Upkeep deaktiviert. Offline-Gehen hat null Konsequenzen. Alles wartet – also warum heute einloggen?",
+    fix:"Claim-Wartung aktivieren. Clan-Upkeep einschalten (DB existiert!). Schwarzmarkt-Angebote verfallen. Streak-Bonus geht verloren. Spürbare aber faire Konsequenzen für Inaktivität."
+  },
+  {
+    icon:"🎰", title:"Variable Belohnung", color:"p",
+    problem:"LuckyCrates nutzen Zufall, aber isoliert. Jobs = fixe $. Cannabis = fixe Ernte. Zombies = gleicher Loot. Nach Tag 3 ist alles vorhersehbar.",
+    fix:"Zombie-Loot variieren (seltene Drops). Seltene Cannabis-Ernte-Events. Schwarzmarkt = unvorhersehbar. Airdrops = random Loot. Fischer: Flaschenpost mit Schatzkoordinaten."
+  },
+  {
+    icon:"👑", title:"Identität & Status", color:"c",
+    problem:"16 Ränge, aber nur Premium käuflich. Kein spielerischer Weg sich abzuheben. Keine öffentlichen Ranglisten. Kein 'Spieler des Monats'. Jeder ist austauschbar.",
+    fix:"Ruf-System mit sichtbaren Titeln im Chat. Kill-Rangliste, Top-Farmer, Reichste Spieler öffentlich. Achievements mit einzigartigen Rewards. Monatliche Auszeichnungen."
+  }
+];
+
+const SYNERGIES = [
+  { icon:"⚒️→⚔️", title:"Jobs + Waffen-Crafting", color:"a",
+    text:"Bergarbeiter liefern Erze, Holzfäller Griffe, Fischer seltene Materialien. Waffen-Crafting braucht alle drei → erzwingt Handel statt Solo-Grind." },
+  { icon:"🔫+💰", title:"Munition + Kill-Rewards", color:"r",
+    text:"Munition kostet Geld. Kills bringen Geld. Jeder Fight wird eine Kosten-Nutzen-Rechnung. Lohnt sich der Kampf? Jede Kugel ist eine Investition." },
+  { icon:"🌿+💊+🕶️", title:"Cannabis + Konsum + Schwarzmarkt", color:"g",
+    text:"Cannabis produzieren → konsumieren für PvP-Buffs oder verkaufen für Geld. Schwarzmarkt verkauft seltene Dünger. Konsum-Items werden handelbar." },
+  { icon:"⚔️+🏴+🎯", title:"Clan-Wars + Bounty + Events", color:"b",
+    text:"Clans kämpfen → Verlierer setzen Kopfgeld → Söldner jagen → beim nächsten Airdrop treffen alle aufeinander. Emergente Stories die Spieler weitererzählen." },
+  { icon:"🔥+🕶️+📡", title:"Streak + Schwarzmarkt + Events", color:"a",
+    text:"Drei Login-Gründe: Daily abholen, Schwarzmarkt checken, Event besuchen. Verschiedene Uhrzeiten = mehrmals täglich einloggen." },
+  { icon:"🏗️+💀+⛏️", title:"Wartung + Full Loot + Knappheit", color:"r",
+    text:"Claim-Kosten + alles droppt bei Tod + Munition kostet = nichts fühlt sich geschenkt an. Echte Konsequenzen erzeugen echte Emotionen." }
+];
+
+// STATE
+let S = { checks:{}, prios:{}, impls:{} };
+try { const x=localStorage.getItem('etaria-v3'); if(x) S=JSON.parse(x); } catch(e){}
+function save(){ try{localStorage.setItem('etaria-v3',JSON.stringify(S))}catch(e){} }
+
+const $=id=>document.getElementById(id);
+const root=$('sections');
+
+function badge(s){
+  if(s==='exists') return '<span class="exists">✓ LIVE</span>';
+  if(s==='partial') return '<span class="partial">◐ TEILWEISE</span>';
+  return '<span class="missing">✗ FEHLT</span>';
+}
+
+function renderAll(){
+  root.innerHTML = [
+    renderStatus(), renderPhases(), renderPlan(), renderRetention(), renderPsycho(), renderSynergies()
+  ].join('');
+  bind();
+  updateProg();
+}
+
+function renderStatus(){
+  return `<div class="sec vis" data-s="status">
+    <div class="sec-head"><div class="ico i-g">📊</div><h2>Server-Status</h2><span class="cnt">16 Plugins · 8 Systeme</span></div>
+    <p class="sec-desc">Was auf Etaria.net tatsächlich läuft. Daten aus eurem Plugin-Code.</p>
+    <div class="grid">${STATUS.map(s=>`
+      <div class="card"><div class="bar bg-${s.color}"></div>
+        <div class="head"><span class="emoji">${s.icon}</span><div class="meta"><span class="cat">${s.cat}</span><h4>${s.title} ${badge(s.status)}</h4></div></div>
+        <p>${s.desc}</p><div class="detail">${s.details}</div>
+        <div class="tags">${s.tags.map(t=>`<span class="pill ${t.startsWith('⚠️')?'t-r':'t-'+s.color}">${t}</span>`).join('')}</div>
+      </div>`).join('')}
+    </div></div>`;
+}
+
+function renderPhases(){
+  return `<div class="sec" data-s="phasen">
+    <div class="sec-head"><div class="ico i-b">📅</div><h2>Spieler-Reise</h2><span class="cnt">4 Phasen</span></div>
+    <p class="sec-desc">Wie ein neuer Spieler Etaria.net erlebt. Hake ab was funktioniert.</p>
+    <div class="tl">${PHASES.map(ph=>{
+      const allDone=ph.checks.every(c=>S.checks[c.k]);
+      return `<div class="ph ${allDone?'done':''}"><div class="dot">${allDone?'✓':ph.num}</div>
+        <div class="card"><div class="ptop"><h4>${ph.title}</h4><span class="time">${ph.time}</span></div>
+        <div class="goal">${ph.goal}</div><p>${ph.text}</p>
+        <div class="cklist">${ph.checks.map(c=>{
+          const on=S.checks[c.k];
+          return `<label class="ck ${on?'on':''}" data-k="${c.k}"><span class="box">${on?'✓':''}</span>${c.t}</label>`;
+        }).join('')}</div></div></div>`;
+    }).join('')}</div></div>`;
+}
+
+function renderPlan(){
+  return `<div class="sec" data-s="plan">
+    <div class="sec-head"><div class="ico i-a">🔨</div><h2>Bauplan</h2><span class="cnt">${PLAN.length} Features</span></div>
+    <p class="sec-desc">Was gebaut werden muss. Priorisiere und hake ab was umgesetzt ist.</p>
+    <div class="grid">${PLAN.map(f=>{
+      const p=S.prios[f.id]||''; const done=S.impls[f.id];
+      return `<div class="card"><div class="bar bg-${f.color}"></div>
+        <div class="head"><span class="emoji">${f.icon}</span><div class="meta"><span class="cat">${f.cat} · Aufwand: ${f.effort}</span><h4>${f.title}</h4></div></div>
+        <p>${f.desc}</p><div class="detail"><strong>Umsetzung:</strong> ${f.impl}</div>
+        <div class="tags">${f.tags.map(t=>`<span class="pill ${t.startsWith('⚠️')?'t-r':t.startsWith('DB')?'t-g':'t-'+f.color}">${t}</span>`).join('')}</div>
+        <div class="status-row">
+          <div class="prio-btns">
+            <button class="pbtn ${p==='h'?'s-h':''}" data-id="${f.id}" data-p="h">Hoch</button>
+            <button class="pbtn ${p==='m'?'s-m':''}" data-id="${f.id}" data-p="m">Mittel</button>
+            <button class="pbtn ${p==='l'?'s-l':''}" data-id="${f.id}" data-p="l">Niedrig</button>
+          </div>
+          <label class="chk ${done?'on':''}" data-id="${f.id}"><span class="box">${done?'✓':''}</span>Umgesetzt</label>
+        </div></div>`;
+    }).join('')}</div></div>`;
+}
+
+function renderRetention(){
+  return `<div class="sec" data-s="retention">
+    <div class="sec-head"><div class="ico i-a">🧲</div><h2>Retention-Tipps</h2><span class="cnt">${RETENTION.length} Strategien</span></div>
+    <p class="sec-desc">Konkrete Tipps wie ihr Spieler haltet. Jeder mit direkter Handlungsanweisung für Etaria.net.</p>
+    <div class="grid">${RETENTION.map(r=>`
+      <div class="tip">
+        <div class="tip-head"><span class="tip-num">${r.num}</span><span class="c-${r.color}">${r.title}</span></div>
+        <p>${r.text}</p>
+        <div class="tip-action">${r.action}</div>
+      </div>`).join('')}
+    </div></div>`;
+}
+
+function renderPsycho(){
+  return `<div class="sec" data-s="psycho">
+    <div class="sec-head"><div class="ico i-p">🧠</div><h2>Spielerpsychologie</h2><span class="cnt">5 Prinzipien</span></div>
+    <p class="sec-desc">Warum Spieler bleiben oder gehen – und wo Etaria.net aktuell Lücken hat.</p>
+    <div class="grid">${PSYCHO.map(p=>`
+      <div class="card"><div class="bar bg-${p.color}"></div>
+        <div class="head"><span class="emoji">${p.icon}</span><h4 class="c-${p.color}">${p.title}</h4></div>
+        <p><strong style="color:var(--red)">Problem auf Etaria:</strong> ${p.problem}</p>
+        <div class="detail" style="margin-top:.6rem"><strong style="color:var(--green)">Lösung:</strong> ${p.fix}</div>
+      </div>`).join('')}
+    </div></div>`;
+}
+
+function renderSynergies(){
+  return `<div class="sec" data-s="synergien">
+    <div class="sec-head"><div class="ico i-r">🔗</div><h2>Synergien</h2><span class="cnt">So greift alles ineinander</span></div>
+    <p class="sec-desc">Kein System existiert allein. Jedes neue Feature verstärkt die bestehenden.</p>
+    <div class="grid grid-sm">${SYNERGIES.map(s=>`
+      <div class="syn"><div class="st"><span class="c-${s.color}">${s.icon}</span> ${s.title}</div><p>${s.text}</p></div>`).join('')}
+    </div></div>`;
+}
+
+function bind(){
+  root.querySelectorAll('.ck').forEach(el=>{
+    el.addEventListener('click',()=>{ S.checks[el.dataset.k]=!S.checks[el.dataset.k]; save(); renderAll(); });
+  });
+  root.querySelectorAll('.pbtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{ const id=btn.dataset.id,p=btn.dataset.p; S.prios[id]=S.prios[id]===p?'':p; save(); renderAll(); });
+  });
+  root.querySelectorAll('.chk').forEach(el=>{
+    el.addEventListener('click',()=>{ S.impls[el.dataset.id]=!S.impls[el.dataset.id]; save(); renderAll(); });
+  });
+}
+
+function updateProg(){
+  const tp=PHASES.reduce((s,p)=>s+p.checks.length,0);
+  const tf=PLAN.length;
+  const total=tp+tf;
+  const dp=Object.values(S.checks).filter(Boolean).length;
+  const df=Object.values(S.impls).filter(Boolean).length;
+  const done=dp+df;
+  const pct=total?Math.round(done/total*100):0;
+  $('pPct').textContent=pct+'%';
+  $('pFill').style.width=pct+'%';
+  $('pDone').textContent=done+' erledigt';
+  $('pAll').textContent=total+' Aufgaben';
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
+    document.querySelector(`.sec[data-s="${btn.dataset.t}"]`).classList.add('vis');
+  });
+});
+
+renderAll();
+</script>
+</body>
+</html>
