@@ -59,14 +59,52 @@ body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#000;font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;padding:.6rem 1.5rem;border-radius:8px;opacity:0;transition:.3s;z-index:600;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.error{background:var(--red);color:#fff}
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--text-d);border-top-color:var(--amber);border-radius:50%;animation:spin .6s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:.3rem;animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* Admin add buttons */
+.add-card-btn{width:100%;padding:1.2rem;background:transparent;border:2px dashed var(--border);border-radius:var(--radius);color:var(--text-d);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:.3s;display:none;text-align:center}
+.add-card-btn:hover{border-color:var(--amber);color:var(--amber);background:rgba(245,166,35,.03)}
+body.admin-mode .add-card-btn{display:block}
+
+/* Card expand */
+.card-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);opacity:0}.card-expand.open{max-height:500px;opacity:1;transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .3s .1s}
+.card-toggle{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--text-d);cursor:pointer;margin-top:.5rem;display:inline-flex;align-items:center;gap:.3rem;transition:.2s;border:none;background:none;padding:.2rem 0}.card-toggle:hover{color:var(--amber)}
+
+/* Delete button for admin */
+.card-delete{position:absolute;top:.6rem;right:.6rem;width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-d);font-size:.6rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:.2s;z-index:2}
+.card-delete:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1)}
+body.admin-mode .card-delete{display:flex}
+
+/* Better card hover glow */
+.card::after{content:'';position:absolute;inset:0;border-radius:var(--radius);opacity:0;transition:opacity .3s;pointer-events:none}.card:hover::after{opacity:1}
+.card.glow-a::after{box-shadow:inset 0 0 30px rgba(245,166,35,.04)}.card.glow-r::after{box-shadow:inset 0 0 30px rgba(239,68,68,.04)}.card.glow-b::after{box-shadow:inset 0 0 30px rgba(59,130,246,.04)}.card.glow-g::after{box-shadow:inset 0 0 30px rgba(16,185,129,.04)}.card.glow-p::after{box-shadow:inset 0 0 30px rgba(168,85,247,.04)}.card.glow-c::after{box-shadow:inset 0 0 30px rgba(6,182,212,.04)}
+
+/* Stagger animation */
+.grid>.card,.grid>.tip,.grid>.syn{opacity:0;animation:cardIn .4s ease forwards}.grid>:nth-child(1){animation-delay:.05s}.grid>:nth-child(2){animation-delay:.1s}.grid>:nth-child(3){animation-delay:.15s}.grid>:nth-child(4){animation-delay:.2s}.grid>:nth-child(5){animation-delay:.25s}.grid>:nth-child(6){animation-delay:.3s}.grid>:nth-child(7){animation-delay:.35s}.grid>:nth-child(8){animation-delay:.4s}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Note input for admin */
+.admin-note{margin-top:.6rem;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;width:100%;color:var(--text);font-family:'Outfit',sans-serif;font-size:.72rem;resize:vertical;min-height:40px;outline:none;display:none}
+.admin-note:focus{border-color:var(--amber)}
+body.admin-mode .admin-note{display:block}
+
+/* Modal for adding cards */
+.modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(6,8,9,.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center}.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;width:460px;max-width:90vw;max-height:80vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.modal h3{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.modal-field{margin-bottom:.8rem}.modal-field label{font-size:.7rem;color:var(--text-d);font-weight:600;display:block;margin-bottom:.3rem}
+.modal-field input,.modal-field textarea,.modal-field select{width:100%;padding:.6rem .8rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;outline:none}.modal-field input:focus,.modal-field textarea:focus{border-color:var(--amber)}
+.modal-field textarea{min-height:70px;resize:vertical}
+.modal-btns{display:flex;gap:.5rem;margin-top:1rem}.modal-btns button{flex:1;padding:.7rem;border-radius:8px;font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;cursor:pointer;transition:.2s;border:none}
+.modal-btns .modal-save{background:var(--amber-g);color:#000}.modal-btns .modal-cancel{background:var(--surface);color:var(--text-m);border:1px solid var(--border)}
+
 @media(max-width:700px){.app{padding:60px .8rem 5rem}.grid,.grid-sm{grid-template-columns:1fr}.nav-btn{padding:.75rem .65rem;font-size:.7rem}.hero h1{font-size:1.7rem}.topbar{padding:0 .8rem}.quick-stats{grid-template-columns:repeat(2,1fr)}.status-row{flex-direction:column;align-items:flex-start}.login-box{padding:1.8rem}}
 </style>
 </head>
 <body>
-<div class="login-overlay" id="loginOverlay"><div class="login-box"><div class="login-logo">ETARIA.NET</div><div class="login-sub">Masterplan Dashboard</div><div class="login-tabs"><button class="login-tab active" onclick="switchLoginTab('admin')">🔑 Admin</button><button class="login-tab" onclick="switchLoginTab('guest')">👁️ Besucher</button></div><div id="loginForm"><div class="login-field"><input type="email" id="loginUser" placeholder="E-Mail" autocomplete="email"></div><div class="login-field"><input type="password" id="loginPass" placeholder="Passwort" autocomplete="current-password"></div><button class="login-btn" id="loginBtn" onclick="doLogin()">Anmelden</button><div class="login-error" id="loginError"></div></div><div id="guestForm" style="display:none"><div class="login-field"><input type="text" id="guestName" placeholder="Dein Name (optional)" autocomplete="off"></div><button class="login-btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)" onclick="doGuest()">Als Besucher eintreten</button></div><div class="guest-link" id="guestLink" onclick="switchLoginTab('guest')">Oder als Besucher ansehen →</div></div></div>
+<div class="login-overlay" id="loginOverlay"><div class="login-box"><div class="login-logo">ETARIA.NET</div><div class="login-sub">Masterplan Dashboard</div><div class="login-tabs"><button class="login-tab active" onclick="switchLoginTab('admin')">🔑 Admin</button><button class="login-tab" onclick="switchLoginTab('guest')">👁️ Besucher</button></div><div id="loginForm"><div class="login-field"><input type="email" id="loginUser" placeholder="E-Mail" autocomplete="email"></div><div class="login-field"><input type="password" id="loginPass" placeholder="Passwort" autocomplete="current-password"></div><button class="login-btn" id="loginBtn" onclick="doLogin()">Anmelden</button><div class="login-error" id="loginError"></div></div><div id="guestForm" style="display:none"><div style="font-size:.75rem;color:var(--text-m);margin-bottom:1rem;line-height:1.5">Kein Account nötig. Du kannst alles ansehen, aber nichts bearbeiten.</div><div class="login-field"><input type="text" id="guestName" placeholder="Dein Name (optional)" autocomplete="off"></div><div class="login-field"><input type="text" id="guestRole" placeholder="Deine Rolle (z.B. Builder, Spieler)" autocomplete="off"></div><button class="login-btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border)" onclick="doGuest()">👁️ Als Besucher eintreten</button></div><div class="guest-link" id="guestLink" onclick="switchLoginTab('guest')">Oder als Besucher ansehen →</div></div></div>
 <div class="topbar" id="topbar" style="display:none"><div class="topbar-left"><span class="topbar-logo">ETARIA</span><span class="topbar-badge" id="roleBadge">ADMIN</span><span id="syncStatus"></span></div><div class="topbar-right"><span class="topbar-user" id="userDisplay"></span><button class="btn-sm" id="editToggle" style="display:none" onclick="toggleEditMode()">✏️ Bearbeiten</button><button class="btn-sm" onclick="doLogout()">Abmelden</button></div></div>
 <div class="edit-mode-bar" id="editBar"><span>✏️ BEARBEITUNGSMODUS</span><button class="edit-save-btn" onclick="saveEdits()">💾 Speichern</button><button class="edit-cancel-btn" onclick="cancelEdits()">✗ Abbrechen</button></div>
 <div class="toast" id="toast"></div>
+<div class="modal-overlay" id="addModal"><div class="modal"><h3 id="modalTitle">➕ Neuen Eintrag hinzufügen</h3><div class="modal-field"><label>Titel</label><input type="text" id="modalInputTitle" placeholder="z.B. Neues Feature"></div><div class="modal-field"><label>Icon (Emoji)</label><input type="text" id="modalInputIcon" placeholder="z.B. 🎮" maxlength="4"></div><div class="modal-field"><label>Kategorie</label><input type="text" id="modalInputCat" placeholder="z.B. PvP / Content"></div><div class="modal-field"><label>Beschreibung</label><textarea id="modalInputDesc" placeholder="Was macht dieses Feature?"></textarea></div><div class="modal-field"><label>Umsetzung / Details</label><textarea id="modalInputImpl" placeholder="Wie soll es umgesetzt werden?"></textarea></div><div class="modal-field"><label>Aufwand</label><select id="modalInputEffort"><option value="Niedrig">Niedrig</option><option value="Mittel" selected>Mittel</option><option value="Hoch">Hoch</option></select></div><div class="modal-field"><label>Farbe</label><select id="modalInputColor"><option value="a">🟡 Amber</option><option value="r">🔴 Rot</option><option value="b">🔵 Blau</option><option value="g">🟢 Grün</option><option value="p">🟣 Lila</option><option value="c">🔷 Cyan</option></select></div><div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Abbrechen</button><button class="modal-save" onclick="saveNewCard()">Hinzufügen</button></div></div></div>
 <div class="app" id="app" style="display:none">
 <header class="hero"><div class="hero-tag" data-editable="hero-tag">Paper 1.21+ · 16 Custom Plugins</div><h1 data-editable="hero-title">Etaria.net Masterplan</h1><p class="hero-desc" data-editable="hero-desc">Status · Spieler-Reise · Bauplan · Retention · Psychologie</p></header>
 <nav class="nav-wrap"><div class="nav-inner"><button class="nav-btn active" data-t="status"><span class="nav-ico">📊</span> Status</button><button class="nav-btn" data-t="phasen"><span class="nav-ico">📅</span> Phasen</button><button class="nav-btn" data-t="plan"><span class="nav-ico">🔨</span> Bauplan</button><button class="nav-btn" data-t="retention"><span class="nav-ico">🧲</span> Retention</button><button class="nav-btn" data-t="psycho"><span class="nav-ico">🧠</span> Psychologie</button><button class="nav-btn" data-t="synergien"><span class="nav-ico">🔗</span> Synergien</button></div></nav>
@@ -170,7 +208,9 @@ async function doLogin(){
 }
 
 function doGuest(){
-  currentUser=$('guestName').value.trim()||'Besucher';isAdmin=false;enterApp();
+  const name=$('guestName').value.trim()||'Besucher';
+  const role=$('guestRole')?$('guestRole').value.trim():'';
+  currentUser=role?name+' ('+role+')':name;isAdmin=false;enterApp();
 }
 
 function doLogout(){
@@ -259,7 +299,7 @@ function renderAll(){
 function renderStatus(){
   const live=STATUS.filter(s=>s.status==='exists').length,partial=STATUS.filter(s=>s.status==='partial').length,crit=STATUS.filter(s=>s.tags.some(t=>t.startsWith('⚠️'))).length;
   const f=STATUS.filter(s=>matchS([s.title,s.desc,s.details,s.cat,...s.tags]));
-  return '<div class="sec" data-s="status"><div class="sec-head"><div class="sec-ico i-g">📊</div><h2>Server-Status</h2><span class="sec-cnt">16 Plugins · 8 Systeme</span></div><p class="sec-desc" data-editable="status-desc">Was auf Etaria.net tatsächlich läuft.</p><div class="quick-stats"><div class="qstat"><div class="qstat-val c-g">'+live+'</div><div class="qstat-label">Live</div></div><div class="qstat"><div class="qstat-val c-a">'+partial+'</div><div class="qstat-label">Teilweise</div></div><div class="qstat"><div class="qstat-val c-r">'+crit+'</div><div class="qstat-label">Warnungen</div></div><div class="qstat"><div class="qstat-val c-c">'+STATUS.length+'</div><div class="qstat-label">Gesamt</div></div></div><div class="grid">'+f.map(s=>'<div class="card"><div class="accent-bar bg-'+s.color+'"></div><div class="card-head"><span class="card-emoji">'+s.icon+'</span><div class="card-meta"><span class="card-cat">'+s.cat+'</span><h4>'+s.title+' '+badge(s.status)+'</h4></div></div><p data-editable="status-'+s.id+'-desc">'+s.desc+'</p><div class="card-detail" data-editable="status-'+s.id+'-detail">'+s.details+'</div><div class="tags">'+s.tags.map(t=>'<span class="pill '+(t.startsWith('⚠️')?'t-r':'t-'+s.color)+'">'+t+'</span>').join('')+'</div></div>').join('')+'</div></div>';
+  return '<div class="sec" data-s="status"><div class="sec-head"><div class="sec-ico i-g">📊</div><h2>Server-Status</h2><span class="sec-cnt">16 Plugins · 8 Systeme</span></div><p class="sec-desc" data-editable="status-desc">Was auf Etaria.net tatsächlich läuft.</p><div class="quick-stats"><div class="qstat"><div class="qstat-val c-g">'+live+'</div><div class="qstat-label">Live</div></div><div class="qstat"><div class="qstat-val c-a">'+partial+'</div><div class="qstat-label">Teilweise</div></div><div class="qstat"><div class="qstat-val c-r">'+crit+'</div><div class="qstat-label">Warnungen</div></div><div class="qstat"><div class="qstat-val c-c">'+STATUS.length+'</div><div class="qstat-label">Gesamt</div></div></div><div class="grid">'+f.map(s=>'<div class="card glow-'+s.color+'"><div class="accent-bar bg-'+s.color+'"></div><div class="card-head"><span class="card-emoji">'+s.icon+'</span><div class="card-meta"><span class="card-cat">'+s.cat+'</span><h4>'+s.title+' '+badge(s.status)+'</h4></div></div><p data-editable="status-'+s.id+'-desc">'+s.desc+'</p><button class="card-toggle" onclick="toggleCardDetail(this)">▼ Details</button><div class="card-expand"><div class="card-detail" data-editable="status-'+s.id+'-detail">'+s.details+'</div><div class="tags">'+s.tags.map(t=>'<span class="pill '+(t.startsWith('⚠️')?'t-r':'t-'+s.color)+'">'+t+'</span>').join('')+'</div><textarea class="admin-note" data-note="status-'+s.id+'" placeholder="Admin-Notiz..." onchange="saveNote(\'status-'+s.id+'\')">'+(cardNotes['status-'+s.id]||'')+'</textarea></div></div>').join('')+'</div></div>';
 }
 
 function renderPhases(){
@@ -271,12 +311,13 @@ function renderPhases(){
 function renderPlan(){
   const f=PLAN.filter(x=>matchS([x.title,x.desc,x.impl,x.cat,...x.tags]));
   const dc=Object.values(S.impls).filter(Boolean).length,hc=Object.values(S.prios).filter(v=>v==='h').length;
-  return '<div class="sec" data-s="plan"><div class="sec-head"><div class="sec-ico i-a">🔨</div><h2>Bauplan</h2><span class="sec-cnt">'+PLAN.length+' Features</span></div><p class="sec-desc" data-editable="plan-desc">Was gebaut werden muss.</p><div class="quick-stats"><div class="qstat"><div class="qstat-val c-g">'+dc+'</div><div class="qstat-label">Umgesetzt</div></div><div class="qstat"><div class="qstat-val c-r">'+hc+'</div><div class="qstat-label">Hohe Prio</div></div><div class="qstat"><div class="qstat-val c-a">'+PLAN.filter(x=>x.effort==='Hoch').length+'</div><div class="qstat-label">Hoher Aufwand</div></div><div class="qstat"><div class="qstat-val c-c">'+(PLAN.length-dc)+'</div><div class="qstat-label">Offen</div></div></div><div class="grid">'+f.map(x=>{const p=S.prios[x.id]||'',d=S.impls[x.id];return '<div class="card" style="'+(d?'opacity:.55;':'')+'"><div class="accent-bar bg-'+x.color+'"></div><div class="card-head"><span class="card-emoji">'+x.icon+'</span><div class="card-meta"><span class="card-cat">'+x.cat+' · '+x.effort+'</span><h4>'+x.title+'</h4></div></div><p data-editable="plan-'+x.id+'-desc">'+x.desc+'</p><div class="card-detail" data-editable="plan-'+x.id+'-impl"><strong>Umsetzung:</strong> '+x.impl+'</div><div class="tags">'+x.tags.map(t=>'<span class="pill '+(t.startsWith('⚠️')?'t-r':'t-'+x.color)+'">'+t+'</span>').join('')+'</div><div class="status-row"><div class="prio-btns"><button class="pbtn '+(p==='h'?'s-h':'')+'" data-id="'+x.id+'" data-p="h">Hoch</button><button class="pbtn '+(p==='m'?'s-m':'')+'" data-id="'+x.id+'" data-p="m">Mittel</button><button class="pbtn '+(p==='l'?'s-l':'')+'" data-id="'+x.id+'" data-p="l">Niedrig</button></div><label class="chk '+(d?'on':'')+'" data-id="'+x.id+'"><span class="box">'+(d?'✓':'')+'</span>Umgesetzt</label></div></div>'}).join('')+'</div></div>';
+  const allPlan=f.concat(customCards.filter(c=>c.section==='plan'));
+  return '<div class="sec" data-s="plan"><div class="sec-head"><div class="sec-ico i-a">🔨</div><h2>Bauplan</h2><span class="sec-cnt">'+(PLAN.length+customCards.filter(c=>c.section==='plan').length)+' Features</span></div><p class="sec-desc" data-editable="plan-desc">Was gebaut werden muss.</p><div class="quick-stats"><div class="qstat"><div class="qstat-val c-g">'+dc+'</div><div class="qstat-label">Umgesetzt</div></div><div class="qstat"><div class="qstat-val c-r">'+hc+'</div><div class="qstat-label">Hohe Prio</div></div><div class="qstat"><div class="qstat-val c-a">'+PLAN.filter(x=>x.effort==='Hoch').length+'</div><div class="qstat-label">Hoher Aufwand</div></div><div class="qstat"><div class="qstat-val c-c">'+(PLAN.length-dc)+'</div><div class="qstat-label">Offen</div></div></div><div class="grid">'+allPlan.map(x=>{const p=S.prios[x.id]||'',d=S.impls[x.id];const isCustom=x.id&&x.id.startsWith('custom-');return '<div class="card glow-'+x.color+'" style="'+(d?'opacity:.55;':'')+'">'+(isCustom?'<button class="card-delete" onclick="deleteCard(\''+x.id+'\')">✕</button>':'')+'<div class="accent-bar bg-'+x.color+'"></div><div class="card-head"><span class="card-emoji">'+x.icon+'</span><div class="card-meta"><span class="card-cat">'+x.cat+' · '+x.effort+'</span><h4>'+x.title+'</h4></div></div><p data-editable="plan-'+x.id+'-desc">'+x.desc+'</p><button class="card-toggle" onclick="toggleCardDetail(this)">▼ Details</button><div class="card-expand"><div class="card-detail" data-editable="plan-'+x.id+'-impl"><strong>Umsetzung:</strong> '+(x.impl||'')+'</div><div class="tags">'+x.tags.map(t=>'<span class="pill '+(t.startsWith('⚠️')?'t-r':'t-'+x.color)+'">'+t+'</span>').join('')+'</div><textarea class="admin-note" data-note="plan-'+x.id+'" placeholder="Admin-Notiz..." onchange="saveNote(\'plan-'+x.id+'\')">'+(cardNotes['plan-'+x.id]||'')+'</textarea></div><div class="status-row"><div class="prio-btns"><button class="pbtn '+(p==='h'?'s-h':'')+'" data-id="'+x.id+'" data-p="h">Hoch</button><button class="pbtn '+(p==='m'?'s-m':'')+'" data-id="'+x.id+'" data-p="m">Mittel</button><button class="pbtn '+(p==='l'?'s-l':'')+'" data-id="'+x.id+'" data-p="l">Niedrig</button></div><label class="chk '+(d?'on':'')+'" data-id="'+x.id+'"><span class="box">'+(d?'✓':'')+'</span>Umgesetzt</label></div></div>'}).join('')+'</div><button class="add-card-btn" onclick="openModal(\'plan\')">➕ Neue Feature-Karte hinzufügen</button></div>';
 }
 
 function renderRetention(){
   const f=RETENTION.filter(r=>matchS([r.title,r.text,r.action]));
-  return '<div class="sec" data-s="retention"><div class="sec-head"><div class="sec-ico i-a">🧲</div><h2>Retention-Tipps</h2><span class="sec-cnt">'+RETENTION.length+' Strategien</span></div><p class="sec-desc" data-editable="retention-desc">Konkrete Tipps wie ihr Spieler haltet.</p><div class="grid">'+f.map(r=>'<div class="tip"><div class="tip-head"><span class="tip-num">'+r.num+'</span><span class="c-'+r.color+'" data-editable="ret-'+r.num+'-title">'+r.title+'</span></div><p data-editable="ret-'+r.num+'-text">'+r.text+'</p><div class="tip-action" data-editable="ret-'+r.num+'-action">'+r.action+'</div></div>').join('')+'</div></div>';
+  return '<div class="sec" data-s="retention"><div class="sec-head"><div class="sec-ico i-a">🧲</div><h2>Retention-Tipps</h2><span class="sec-cnt">'+RETENTION.length+' Strategien</span></div><p class="sec-desc" data-editable="retention-desc">Konkrete Tipps wie ihr Spieler haltet.</p><div class="grid">'+f.map(r=>'<div class="tip"><div class="tip-head"><span class="tip-num">'+r.num+'</span><span class="c-'+r.color+'" data-editable="ret-'+r.num+'-title">'+r.title+'</span></div><p data-editable="ret-'+r.num+'-text">'+r.text+'</p><div class="tip-action" data-editable="ret-'+r.num+'-action">'+r.action+'</div></div>').join('')+'</div><button class="add-card-btn" onclick="openModal(\'retention\')">➕ Neuen Retention-Tipp hinzufügen</button></div>';
 }
 
 function renderPsycho(){
@@ -312,6 +353,72 @@ document.querySelectorAll('.nav-btn').forEach(btn=>{btn.onclick=()=>{
 
 $('loginPass').onkeydown=e=>{if(e.key==='Enter')doLogin()};
 $('guestName').onkeydown=e=>{if(e.key==='Enter')doGuest()};
+
+// ========== CUSTOM CARDS ==========
+let customCards=[];
+let cardNotes={};
+let currentModalSection='plan';
+
+async function loadCustomData(){
+  try{
+    const cd=await db.collection('masterplan').doc('customCards').get();
+    if(cd.exists)customCards=cd.data().cards||[];
+    const nd=await db.collection('masterplan').doc('notes').get();
+    if(nd.exists)cardNotes=nd.data()||{};
+  }catch(e){console.error(e)}
+}
+
+db.collection('masterplan').doc('customCards').onSnapshot(doc=>{if(doc.exists){customCards=doc.data().cards||[];renderAll()}});
+db.collection('masterplan').doc('notes').onSnapshot(doc=>{if(doc.exists){cardNotes=doc.data()||{}}});
+
+function openModal(section){currentModalSection=section;$('addModal').classList.add('show');$('modalInputTitle').focus()}
+function closeModal(){$('addModal').classList.remove('show');['modalInputTitle','modalInputIcon','modalInputCat','modalInputDesc','modalInputImpl'].forEach(id=>{$(id).value=''})}
+
+async function saveNewCard(){
+  const title=$('modalInputTitle').value.trim();
+  if(!title){showToast('❌ Titel ist Pflicht!',true);return}
+  const card={
+    id:'custom-'+Date.now(),
+    icon:$('modalInputIcon').value.trim()||'📌',
+    title:title,
+    cat:$('modalInputCat').value.trim()||'Custom',
+    color:$('modalInputColor').value,
+    desc:$('modalInputDesc').value.trim()||'',
+    impl:$('modalInputImpl').value.trim()||'',
+    effort:$('modalInputEffort').value,
+    tags:['Custom'],
+    section:currentModalSection,
+    createdAt:Date.now()
+  };
+  customCards.push(card);
+  try{await db.collection('masterplan').doc('customCards').set({cards:customCards});showToast('✓ Karte hinzugefügt!');closeModal();renderAll()}
+  catch(e){showToast('❌ Fehler beim Speichern',true)}
+}
+
+async function deleteCard(id){
+  if(!confirm('Karte wirklich löschen?'))return;
+  customCards=customCards.filter(c=>c.id!==id);
+  try{await db.collection('masterplan').doc('customCards').set({cards:customCards});showToast('✓ Gelöscht');renderAll()}
+  catch(e){showToast('❌ Fehler',true)}
+}
+
+async function saveNote(id){
+  const el=document.querySelector('.admin-note[data-note="'+id+'"]');
+  if(!el)return;
+  cardNotes[id]=el.value;
+  try{await db.collection('masterplan').doc('notes').set(cardNotes);showToast('✓ Notiz gespeichert')}
+  catch(e){showToast('❌ Fehler',true)}
+}
+
+function toggleCardDetail(btn){
+  const expand=btn.parentElement.querySelector('.card-expand');
+  if(expand){expand.classList.toggle('open');btn.textContent=expand.classList.contains('open')?'▲ Weniger':'▼ Details'}
+}
+
+// Override enterApp to also load custom data
+const origEnterApp=enterApp;
+enterApp=function(){origEnterApp();loadCustomData()};
+
 renderAll();
 </script>
 </body>
