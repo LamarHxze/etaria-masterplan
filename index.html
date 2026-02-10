@@ -779,3 +779,34 @@ render();
 </script>
 </body>
 </html>
+>{
+    b.onclick=()=>{
+      tab=b.dataset.t;
+      document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.dataset.s===tab));
+    };
+  });
+}
+
+function prog(){
+  const steps=LEIT.filter(l=>!S.del.includes(l.id));
+  const checks=REISE.reduce((a,p)=>a+p.ck.length,0);
+  const total=steps.length+checks;
+  const doneSteps=steps.filter(s=>S.done[s.id]).length;
+  const doneChecks=Object.keys(S.checks).filter(k=>S.checks[k]).length;
+  const done=doneSteps+doneChecks;
+  const pct=total?Math.round(done/total*100):0;
+  
+  $('pct').textContent=pct+'%';
+  $('fill').style.width=pct+'%';
+  $('pdone').textContent=done;
+  $('ptotal').textContent=total;
+}
+
+// Init
+$('lp').onkeydown=e=>{if(e.key==='Enter')login()};
+render();
+</script>
+</body>
+</html>
