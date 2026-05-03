@@ -1,0 +1,1535 @@
+<!doctype html>
+
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0b">
+<title>MCPULSE — Die Live-Karte der Minecraft-Welt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0b;
+  --bg-2:#101012;
+  --panel:#141417;
+  --panel-2:#1a1a1e;
+  --line:#26262b;
+  --line-2:#33333a;
+  --ink:#f0f0ee;
+  --ink-dim:#a0a0a4;
+  --ink-mute:#5a5a60;
+  --accent:#8aff80;
+  --accent-glow:rgba(138,255,128,.35);
+  --amber:#ffb547;
+  --rose:#ff6b6b;
+  --azure:#5eb9ff;
+  --violet:#c08fff;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(900px 500px at 85% -5%, rgba(138,255,128,.07), transparent 60%),
+    radial-gradient(700px 400px at 10% 30%, rgba(94,185,255,.04), transparent 70%),
+    var(--bg);
+  min-height:100vh;
+  padding-bottom:var(--safe-bot);
+}
+.mono{font-family:'JetBrains Mono',monospace;font-feature-settings:"tnum" 1,"zero" 1}
+.serif{font-family:'Instrument Serif',serif}
+.dim{color:var(--ink-dim)}
+.mute{color:var(--ink-mute)}
+.up{color:var(--accent)}
+.down{color:var(--rose)}
+
+::selection{background:var(–accent-glow);color:var(–ink)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(–line-2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#444}
+
+/* ============== TOP RAIL ============== */
+.rail{
+border-bottom:1px solid var(–line);
+background:rgba(10,10,11,.78);
+position:sticky;top:0;z-index:50;
+backdrop-filter:blur(14px) saturate(140%);
+-webkit-backdrop-filter:blur(14px) saturate(140%);
+padding-top:var(–safe-top);
+}
+.rail-inner{display:flex;align-items:center;gap:14px;padding:12px 20px;max-width:1720px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer}
+.brand .mark{
+width:30px;height:30px;border-radius:8px;
+background:conic-gradient(from 220deg, var(–accent), #5eb9ff, var(–violet), var(–accent));
+position:relative;flex-shrink:0;
+box-shadow:0 4px 12px rgba(138,255,128,.25);
+}
+.brand .mark::after{
+content:””;position:absolute;inset:5px;background:var(–bg-2);border-radius:5px;
+background-image:radial-gradient(circle at 50% 50%, var(–accent) 0%, transparent 60%);
+opacity:.4;
+}
+.brand .name{font-weight:700;font-size:18px;letter-spacing:-.01em;white-space:nowrap}
+.brand .name span{color:var(–accent)}
+.brand .tag{font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.18em;white-space:nowrap;margin-left:6px}
+
+.tabs{display:flex;gap:2px;margin-left:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+font-size:13px;color:var(–ink-dim);text-decoration:none;padding:7px 13px;
+border-radius:6px;white-space:nowrap;cursor:pointer;font-weight:500;
+transition:color .15s, background .15s;
+background:transparent;border:0;font-family:inherit;
+}
+.tab:hover{color:var(–ink);background:rgba(255,255,255,.04)}
+.tab.active{color:var(–ink);background:var(–panel);box-shadow:inset 0 0 0 1px var(–line-2)}
+.tab .num{font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);margin-left:6px}
+
+.right{margin-left:auto;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.live{display:inline-flex;align-items:center;gap:8px;font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-dim);text-transform:uppercase;letter-spacing:.2em}
+.dot{width:7px;height:7px;border-radius:50%;background:var(–accent);box-shadow:0 0 12px var(–accent-glow);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.clock{font-family:‘JetBrains Mono’,monospace;font-size:12px;color:var(–ink)}
+
+/* ============== TICKER ============== */
+.ticker{border-bottom:1px solid var(–line);background:linear-gradient(180deg,var(–bg) 0%,var(–bg-2) 100%);overflow:hidden;position:relative}
+.ticker-track{display:flex;gap:36px;padding:9px 0;white-space:nowrap;animation:scroll 110s linear infinite;will-change:transform}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-item{font-family:‘JetBrains Mono’,monospace;font-size:12px;color:var(–ink-dim);padding:0 4px;display:inline-flex;align-items:center;gap:7px}
+.ticker-item img{width:16px;height:16px;image-rendering:pixelated;border-radius:2px;flex-shrink:0;background:var(–bg-2)}
+.ticker-item b{color:var(–ink);font-weight:500}
+.ticker-item .rgn{color:var(–ink-mute);font-size:10.5px}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============== LAYOUT ============== */
+.wrap{max-width:1720px;margin:0 auto;padding:24px 20px}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* HERO */
+.hero{
+display:grid;grid-template-columns:1.4fr 1fr;gap:30px;align-items:end;
+padding:8px 0 28px;border-bottom:1px solid var(–line);margin-bottom:24px;
+}
+.hero-text .crumbs{
+font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);
+text-transform:uppercase;letter-spacing:.18em;margin-bottom:14px;
+display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+.crumbs .ok{color:var(–accent)}
+.crumbs .sep{opacity:.4}
+.hero h1{
+font-family:‘Instrument Serif’,serif;font-weight:400;font-size:64px;
+line-height:.98;letter-spacing:-.025em;margin:0 0 14px;
+}
+.hero h1 em{font-style:italic;background:linear-gradient(90deg,var(–accent),#5eb9ff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.hero .lede{color:var(–ink-dim);font-size:15px;max-width:54ch;line-height:1.55}
+
+.hero-stat{
+background:var(–panel);border:1px solid var(–line);border-radius:12px;
+padding:24px;position:relative;overflow:hidden;
+}
+.hero-stat::before{
+content:””;position:absolute;top:0;left:0;right:0;height:1px;
+background:linear-gradient(90deg,transparent,var(–accent-glow),transparent);
+}
+.hero-stat .lab{font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.18em}
+.hero-stat .big{font-family:‘Instrument Serif’,serif;font-weight:400;font-size:72px;line-height:1;letter-spacing:-.03em;margin-top:10px}
+.hero-stat .meta{margin-top:14px;display:flex;justify-content:space-between;font-family:‘JetBrains Mono’,monospace;font-size:11.5px;color:var(–ink-dim);gap:10px;flex-wrap:wrap}
+
+/* KPI Strip */
+.kpis{
+display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;
+}
+.kpi{
+background:var(–panel);border:1px solid var(–line);border-radius:10px;
+padding:16px;min-width:0;position:relative;overflow:hidden;
+transition:border-color .2s, transform .2s;
+}
+.kpi:hover{border-color:var(–line-2)}
+.kpi .lab{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.16em}
+.kpi .v{font-family:‘Instrument Serif’,serif;font-weight:400;font-size:32px;letter-spacing:-.02em;margin-top:8px;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kpi .sub{margin-top:8px;font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:24px}
+.col{display:flex;flex-direction:column;gap:24px;min-width:0}
+.card{
+background:var(–panel);border:1px solid var(–line);border-radius:12px;overflow:hidden;
+}
+.card-h{
+display:flex;align-items:center;justify-content:space-between;gap:10px;
+padding:14px 18px;border-bottom:1px solid var(–line);
+}
+.card-h h3{margin:0;font-size:11.5px;font-family:‘JetBrains Mono’,monospace;text-transform:uppercase;letter-spacing:.16em;color:var(–ink-dim);font-weight:500}
+.card-h .meta{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-mute);white-space:nowrap}
+.card-b{padding:18px}
+
+.chart-wrap{position:relative;height:320px}
+#mainChart{display:block;width:100%;height:100%}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-dim)}
+.legend i{display:inline-block;width:10px;height:2px;margin-right:6px;vertical-align:middle}
+
+/* Filter bar */
+.filter{
+display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(–line);
+background:var(–bg-2);flex-wrap:wrap;align-items:center;
+}
+.filter input{
+background:var(–panel);border:1px solid var(–line);color:var(–ink);
+padding:7px 12px;font:13px ‘Inter’,sans-serif;outline:none;border-radius:6px;
+min-width:0;flex:1;max-width:300px;
+}
+.filter input:focus{border-color:var(–line-2);box-shadow:0 0 0 3px rgba(255,255,255,.03)}
+.filter input::placeholder{color:var(–ink-mute)}
+.chip{
+background:transparent;border:1px solid var(–line);color:var(–ink-dim);
+padding:6px 11px;font:11px ‘JetBrains Mono’,monospace;cursor:pointer;
+text-transform:uppercase;letter-spacing:.08em;border-radius:6px;
+transition:all .15s;
+}
+.chip:hover{color:var(–ink);border-color:var(–line-2)}
+.chip.on{color:var(–bg);background:var(–accent);border-color:var(–accent);font-weight:600}
+
+/* Server table */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:820px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(–line);vertical-align:middle}
+th{font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.14em;font-weight:500;background:var(–bg-2);position:sticky;top:0;z-index:2}
+tbody tr{transition:background .15s;cursor:pointer}
+tbody tr:hover{background:rgba(255,255,255,.025)}
+tbody tr.loading td{color:var(–ink-mute);font-style:italic;cursor:default}
+td.r{text-align:right;font-family:‘JetBrains Mono’,monospace}
+td .name{font-weight:500;display:flex;align-items:center;gap:12px}
+td .name img{width:36px;height:36px;image-rendering:pixelated;border:1px solid var(–line);border-radius:6px;background:var(–bg);flex-shrink:0;object-fit:cover}
+td .name .txt{min-width:0}
+td .name .addr{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-mute);font-weight:400;margin-top:1px}
+td .ver{display:flex;flex-direction:column;gap:2px}
+.bar{position:relative;height:4px;background:var(–line);width:100%;margin-top:6px;overflow:hidden;border-radius:2px}
+.bar > i{position:absolute;left:0;top:0;bottom:0;background:var(–accent);display:block;transition:width .6s ease;border-radius:2px}
+.pill{display:inline-block;padding:2px 8px;border:1px solid var(–line-2);border-radius:4px;font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-dim);white-space:nowrap;font-weight:500}
+.pill.geo-de{color:var(–accent);border-color:rgba(138,255,128,.4);background:rgba(138,255,128,.06)}
+.pill.geo-eu{color:var(–azure);border-color:rgba(94,185,255,.4);background:rgba(94,185,255,.06)}
+.pill.geo-global{color:var(–amber);border-color:rgba(255,181,71,.4);background:rgba(255,181,71,.06)}
+.pill.edition-bedrock{color:var(–violet);border-color:rgba(192,143,255,.4);background:rgba(192,143,255,.06)}
+.ping-good{color:var(–accent)}.ping-mid{color:var(–amber)}.ping-bad{color:var(–rose)}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle;flex-shrink:0}
+.status-on{background:var(–accent);box-shadow:0 0 8px var(–accent-glow)}
+.status-off{background:var(–rose)}
+.status-pending{background:var(–ink-mute);animation:pulse 1.4s infinite}
+
+.srv-cards{display:none;flex-direction:column;max-height:820px;overflow-y:auto}
+.srv-card{padding:14px 16px;border-bottom:1px solid var(–line);display:flex;gap:12px;align-items:flex-start;cursor:pointer;transition:background .15s}
+.srv-card:hover{background:rgba(255,255,255,.02)}
+.srv-card:last-child{border-bottom:0}
+.srv-card .ico{width:46px;height:46px;image-rendering:pixelated;border:1px solid var(–line);border-radius:8px;background:var(–bg);flex-shrink:0;object-fit:cover}
+.srv-card .body{flex:1;min-width:0}
+.srv-row1{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.srv-rank{font-family:‘JetBrains Mono’,monospace;color:var(–ink-mute);font-size:11px;flex-shrink:0}
+.srv-name{font-weight:500;font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srv-players{font-family:‘JetBrains Mono’,monospace;font-weight:600;color:var(–accent);font-size:14px;flex-shrink:0}
+.srv-row2{display:flex;align-items:center;gap:8px;margin-top:5px;font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-mute);flex-wrap:wrap}
+.srv-row2 .addr{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+
+/* MODAL */
+.modal-overlay{
+position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+z-index:100;display:none;align-items:center;justify-content:center;padding:20px;
+animation:fade .2s ease;
+}
+.modal-overlay.open{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{
+background:var(–panel);border:1px solid var(–line-2);border-radius:14px;
+width:100%;max-width:580px;max-height:90vh;overflow-y:auto;
+animation:rise .3s cubic-bezier(.2,.9,.3,1.1);
+}
+@keyframes rise{from{transform:translateY(20px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.modal-h{
+display:flex;gap:16px;padding:22px;border-bottom:1px solid var(–line);align-items:flex-start;
+}
+.modal-h img{width:64px;height:64px;border-radius:10px;border:1px solid var(–line);image-rendering:pixelated;flex-shrink:0}
+.modal-h .info{flex:1;min-width:0}
+.modal-h .name{font-family:‘Instrument Serif’,serif;font-size:28px;line-height:1.1;letter-spacing:-.01em;margin-bottom:4px}
+.modal-h .addr{font-family:‘JetBrains Mono’,monospace;font-size:12px;color:var(–ink-dim);word-break:break-all}
+.modal-h .copy{
+background:var(–bg-2);border:1px solid var(–line);color:var(–ink-dim);
+padding:5px 9px;font:10.5px ‘JetBrains Mono’,monospace;cursor:pointer;
+text-transform:uppercase;letter-spacing:.12em;border-radius:5px;margin-top:6px;
+display:inline-flex;align-items:center;gap:5px;
+}
+.modal-h .copy:hover{color:var(–ink);border-color:var(–line-2)}
+.modal-close{
+background:transparent;border:0;color:var(–ink-mute);font-size:24px;cursor:pointer;
+width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:6px;flex-shrink:0;
+}
+.modal-close:hover{color:var(–ink);background:var(–bg-2)}
+.modal-body{padding:22px}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px}
+.mstat{padding:14px;background:var(–bg-2);border-radius:8px;border:1px solid var(–line)}
+.mstat .l{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.14em}
+.mstat .v{font-family:‘Instrument Serif’,serif;font-size:24px;letter-spacing:-.01em;margin-top:6px;line-height:1}
+.mstat .v.mono{font-family:‘JetBrains Mono’,monospace;font-size:18px;font-weight:500}
+.mstat .s{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-dim);margin-top:4px}
+.motd{
+background:var(–bg-2);border:1px solid var(–line);border-radius:8px;
+padding:14px;font-family:‘JetBrains Mono’,monospace;font-size:12px;color:var(–ink-dim);
+white-space:pre-wrap;line-height:1.6;max-height:140px;overflow-y:auto;
+}
+.modal-footer{padding:14px 22px;border-top:1px solid var(–line);background:var(–bg-2);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.modal-footer .label{font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.14em}
+
+/* Modes */
+.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(–line)}
+.mode{background:var(–panel);padding:16px;min-width:0}
+.mode .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mode .n{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.mode .p{font-family:‘JetBrains Mono’,monospace;color:var(–ink-dim);font-size:12px;flex-shrink:0}
+.mode .v{font-family:‘Instrument Serif’,serif;font-size:26px;letter-spacing:-.01em;margin-top:5px;line-height:1}
+.mode .b{margin-top:9px}
+
+/* Gauge */
+.gauge{padding:24px 14px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.gauge canvas{display:block}
+.gauge .v{font-family:‘Instrument Serif’,serif;font-size:46px;letter-spacing:-.02em;margin-top:-72px;pointer-events:none;line-height:1}
+.gauge .lab{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-dim);text-transform:uppercase;letter-spacing:.18em}
+
+/* Facts */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(–line)}
+.fact{background:var(–panel);padding:16px;min-width:0}
+.fact .lab{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.14em}
+.fact .val{font-family:‘Instrument Serif’,serif;font-size:24px;letter-spacing:-.01em;margin-top:5px;line-height:1.1;word-break:break-all}
+.fact .sub{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-dim);margin-top:4px}
+
+/* Releases */
+.releases{padding:0;max-height:540px;overflow-y:auto}
+.rel{display:flex;gap:14px;padding:13px 18px;border-bottom:1px solid var(–line);align-items:flex-start}
+.rel:last-child{border-bottom:0}
+.rel .date{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-mute);min-width:80px;padding-top:2px;flex-shrink:0}
+.rel .ver{font-family:‘JetBrains Mono’,monospace;font-size:13px;color:var(–accent);font-weight:500;min-width:90px;flex-shrink:0;word-break:break-all}
+.rel .body{flex:1;min-width:0;font-size:13px}
+.rel .body .h{font-weight:500;text-transform:capitalize}
+.rel .body .d{color:var(–ink-dim);font-size:12.5px;margin-top:2px;line-height:1.4}
+.rel .body .tag{font-family:‘JetBrains Mono’,monospace;font-size:10px;text-transform:uppercase;letter-spacing:.14em;margin-right:8px}
+.tag-release{color:var(–accent)}.tag-snapshot{color:var(–azure)}.tag-old_beta{color:var(–violet)}.tag-old_alpha{color:var(–amber)}
+
+/* Services */
+.svc{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(–line);font-size:13px}
+.svc:last-child{border-bottom:0}
+.svc .n{display:flex;align-items:center;gap:10px;min-width:0}
+.svc .lat{font-family:‘JetBrains Mono’,monospace;font-size:11.5px;color:var(–ink-dim);text-align:right;flex-shrink:0}
+.svc-ok{color:var(–accent)}.svc-deg{color:var(–amber)}.svc-down{color:var(–rose)}.svc-pending{color:var(–ink-mute)}
+
+/* Discover Tab */
+.discover-grid{
+display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;
+}
+.dcard{
+background:var(–panel);border:1px solid var(–line);border-radius:12px;
+padding:20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:12px;
+position:relative;overflow:hidden;
+}
+.dcard:hover{border-color:var(–line-2);transform:translateY(-2px)}
+.dcard .h{display:flex;align-items:center;gap:14px}
+.dcard .h img{width:54px;height:54px;border-radius:10px;border:1px solid var(–line);image-rendering:pixelated;background:var(–bg);flex-shrink:0;object-fit:cover}
+.dcard .h .t{min-width:0;flex:1}
+.dcard .h .name{font-family:‘Instrument Serif’,serif;font-size:22px;letter-spacing:-.01em;line-height:1.1;margin-bottom:3px}
+.dcard .h .addr{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dcard .stats{display:flex;gap:10px;flex-wrap:wrap}
+.dcard .stat{flex:1;min-width:0;background:var(–bg-2);padding:10px 12px;border-radius:6px;border:1px solid var(–line)}
+.dcard .stat .l{font-family:‘JetBrains Mono’,monospace;font-size:9.5px;color:var(–ink-mute);text-transform:uppercase;letter-spacing:.14em}
+.dcard .stat .v{font-family:‘Instrument Serif’,serif;font-size:22px;letter-spacing:-.02em;margin-top:2px;line-height:1}
+.dcard .stat .v.mono{font-family:‘JetBrains Mono’,monospace;font-size:14px;font-weight:500}
+.dcard .footer{display:flex;justify-content:space-between;align-items:center;font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–ink-mute);flex-wrap:wrap;gap:8px}
+
+/* Quick rankings */
+.rank{padding:0}
+.rank-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(–line);cursor:pointer;transition:background .15s}
+.rank-row:last-child{border-bottom:0}
+.rank-row:hover{background:rgba(255,255,255,.02)}
+.rank-row .pos{font-family:‘Instrument Serif’,serif;font-size:22px;color:var(–ink-mute);min-width:30px;line-height:1;letter-spacing:-.02em}
+.rank-row .pos.gold{color:var(–amber)}
+.rank-row img{width:32px;height:32px;border-radius:6px;border:1px solid var(–line);image-rendering:pixelated;background:var(–bg);flex-shrink:0;object-fit:cover}
+.rank-row .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.rank-row .v{font-family:‘JetBrains Mono’,monospace;font-weight:600;color:var(–accent);flex-shrink:0}
+
+/* Toast */
+.toast{
+position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);
+background:var(–panel);border:1px solid var(–line-2);border-radius:8px;
+padding:10px 16px;font-family:‘JetBrains Mono’,monospace;font-size:12px;
+z-index:200;transition:transform .3s cubic-bezier(.2,.9,.3,1.1);
+box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Footer */
+footer{
+border-top:1px solid var(–line);margin-top:40px;padding:24px 20px;
+display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+font-family:‘JetBrains Mono’,monospace;font-size:10.5px;color:var(–ink-mute);
+max-width:1720px;margin-left:auto;margin-right:auto;
+}
+
+/* Responsive */
+@media(max-width:1280px){
+.grid{grid-template-columns:1fr}
+.hero{grid-template-columns:1fr}
+.hero h1{font-size:48px}
+.hero-stat .big{font-size:60px}
+.kpis{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:780px){
+.kpis{grid-template-columns:repeat(2,1fr)}
+.facts{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+.wrap{padding:18px 14px}
+.rail-inner{padding:10px 14px;gap:10px}
+.brand .tag{display:none}
+.brand .name{font-size:16px}
+.clock{font-size:11px}
+.live span:not(.dot){display:none}
+.hero h1{font-size:34px}
+.hero-stat .big{font-size:46px}
+.hero .lede{font-size:13.5px}
+.kpi{padding:14px}
+.kpi .v{font-size:24px}
+.grid{gap:18px}
+.col{gap:18px}
+.card-h{padding:13px 14px}
+.card-b{padding:14px}
+.chart-wrap{height:240px}
+.tbl-wrap{display:none}
+.srv-cards{display:flex}
+.modes{grid-template-columns:1fr}
+.filter input{flex-basis:100%;max-width:none}
+.modal-h{padding:18px;gap:12px}
+.modal-h img{width:54px;height:54px}
+.modal-h .name{font-size:22px}
+.modal-body{padding:18px}
+.modal-stats{grid-template-columns:1fr 1fr}
+footer{flex-direction:column;font-size:10px;padding:18px 14px}
+.discover-grid{grid-template-columns:1fr}
+}
+@media(max-width:400px){
+.hero h1{font-size:28px}
+.kpi .v{font-size:21px}
+.tabs{gap:0}
+.tab{padding:6px 9px;font-size:12px}
+.tab .num{display:none}
+}
+@media(min-width:1440px){
+.hero h1{font-size:76px}
+.hero-stat .big{font-size:88px}
+}
+</style>
+
+</head>
+<body>
+
+<header class="rail">
+  <div class="rail-inner">
+    <div class="brand" onclick="switchTab('overview')">
+      <div class="mark"></div>
+      <div class="name">MC<span>PULSE</span></div>
+      <div class="tag">Live · Real-Time</div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="overview">Übersicht</button>
+      <button class="tab" data-tab="discover">Entdecken<span class="num" id="tab-num-discover">—</span></button>
+      <button class="tab" data-tab="rankings">Rangliste</button>
+      <button class="tab" data-tab="tech">Tech &amp; Releases</button>
+      <button class="tab" data-tab="services">Services</button>
+    </div>
+    <div class="right">
+      <span class="live"><span class="dot"></span><span>Live</span></span>
+      <span class="clock mono" id="clock">--:--:--</span>
+    </div>
+  </div>
+</header>
+
+<div class="ticker"><div class="ticker-track" id="ticker"><span class="ticker-item dim">Verbinde mit Live-Datenquellen…</span></div></div>
+
+<main class="wrap">
+
+  <!-- ============ TAB: OVERVIEW ============ -->
+
+  <div class="tab-content active" id="tab-overview">
+
+```
+<section class="hero">
+  <div class="hero-text">
+    <div class="crumbs">
+      <span>Java &amp; Bedrock</span><span class="sep">·</span>
+      <span><span id="srv-tracked" class="mono">–</span> Server</span><span class="sep">·</span>
+      <span>Update <span id="updated" class="mono">jetzt</span></span><span class="sep">·</span>
+      <span class="ok">● <span id="status-text">Initialisiere…</span></span>
+    </div>
+    <h1>Der Puls der<br><em>Minecraft-Welt</em>.</h1>
+    <p class="lede">Echtzeit-Beobachtung der größten Minecraft-Server: deutsche Networks, europäische Plattformen, globale Mega-Server, dazu Bedrock-Edition. Spielerzahlen, Versionen, Patches, Service-Status — direkt aus den offiziellen Quellen.</p>
+  </div>
+  <div class="hero-stat">
+    <div class="lab">Spieler weltweit · jetzt</div>
+    <div class="big mono" id="hero-total">—</div>
+    <div class="meta">
+      <span><span class="dim">DE:</span> <span id="hero-de" class="mono" style="color:var(--accent)">—</span></span>
+      <span><span class="dim">Trend:</span> <span id="hero-trend" class="mono">—</span></span>
+      <span><span class="dim">Top:</span> <span id="hero-top" class="mono">—</span></span>
+    </div>
+  </div>
+</section>
+
+<section class="kpis">
+  <div class="kpi">
+    <div class="lab">Server online</div>
+    <div class="v mono" id="kpi-servers">—</div>
+    <div class="sub"><span id="kpi-up" class="up">—</span> Verfügbarkeit</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">Spieler · DE</div>
+    <div class="v mono" id="kpi-players-de">—</div>
+    <div class="sub"><span id="kpi-de-d" class="up">±0</span> seit Start</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">Spieler · EU</div>
+    <div class="v mono" id="kpi-players-eu">—</div>
+    <div class="sub" id="kpi-eu-srv">—</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">Spieler · Global</div>
+    <div class="v mono" id="kpi-players-global">—</div>
+    <div class="sub" id="kpi-global-srv">—</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">Bedrock</div>
+    <div class="v mono" id="kpi-players-bedrock">—</div>
+    <div class="sub" id="kpi-bedrock-srv">—</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">Ø API-Antwort</div>
+    <div class="v mono" id="kpi-ping">—</div>
+    <div class="sub">HTTP-RTT</div>
+  </div>
+</section>
+
+<div class="grid">
+  <div class="col">
+
+    <section class="card">
+      <div class="card-h">
+        <h3>Live-Verlauf · ab Seitenaufruf</h3>
+        <span class="meta mono" id="chart-points">—</span>
+      </div>
+      <div class="card-b">
+        <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i> Gesamt</span>
+          <span><i style="background:var(--azure)"></i> DE-Server</span>
+          <span><i style="background:var(--amber)"></i> Top 5</span>
+          <span><i style="background:var(--ink-mute);height:1px"></i> Mittelwert</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-h">
+        <h3>Server-Index · klickbar</h3>
+        <span class="meta mono"><span id="srv-count">—</span> / <span id="srv-total">—</span> erreichbar</span>
+      </div>
+      <div class="filter">
+        <input type="text" id="search" placeholder="Suche…" autocomplete="off">
+        <button class="chip on" data-cat="">Alle</button>
+        <button class="chip" data-cat="de">DE</button>
+        <button class="chip" data-cat="eu">EU</button>
+        <button class="chip" data-cat="global">Global</button>
+        <button class="chip" data-cat="bedrock">Bedrock</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Server</th>
+              <th>Region</th>
+              <th>Software / Version</th>
+              <th class="r">Antw.</th>
+              <th class="r">Spieler</th>
+              <th class="r" style="width:18%">Last</th>
+            </tr>
+          </thead>
+          <tbody id="srv-body">
+            <tr class="loading"><td colspan="7" style="padding:30px;text-align:center">Lade Server-Index…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="srv-cards" id="srv-cards"></div>
+    </section>
+
+  </div>
+
+  <div class="col">
+
+    <section class="card">
+      <div class="card-h">
+        <h3>Aktivitäts-Index</h3>
+        <span class="meta mono" id="hype-trend">—</span>
+      </div>
+      <div class="gauge">
+        <canvas id="gauge" width="240" height="140"></canvas>
+        <div class="v mono" id="hype-val">—</div>
+        <div class="lab" id="hype-label">berechne…</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-h">
+        <h3>Top Spielmodi</h3>
+        <span class="meta mono">live aggregiert</span>
+      </div>
+      <div class="modes" id="mode-grid"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-h">
+        <h3>Versions-Verteilung</h3>
+        <span class="meta mono">nach Spielern</span>
+      </div>
+      <div class="card-b">
+        <canvas id="versionChart" style="width:100%;height:180px"></canvas>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-h">
+        <h3>Server-Software</h3>
+        <span class="meta mono">Backend-Stack</span>
+      </div>
+      <div class="card-b">
+        <canvas id="softwareChart" style="width:100%;height:180px"></canvas>
+      </div>
+    </section>
+
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- ============ TAB: DISCOVER ============ -->
+
+  <div class="tab-content" id="tab-discover">
+    <section class="hero">
+      <div class="hero-text">
+        <div class="crumbs">
+          <span>Top-Server</span><span class="sep">·</span>
+          <span>nach Spielerzahl sortiert</span><span class="sep">·</span>
+          <span class="ok">live</span>
+        </div>
+        <h1>Wo gerade <em>was los</em> ist.</h1>
+        <p class="lede">Klick auf eine Karte für Details — MOTD, IP, Version, Software. Adresse zum Kopieren ist eine Tippbewegung entfernt.</p>
+      </div>
+      <div></div>
+    </section>
+    <div class="discover-grid" id="discover-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-mute)" class="mono">Lade…</div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: RANKINGS ============ -->
+
+  <div class="tab-content" id="tab-rankings">
+    <section class="hero">
+      <div class="hero-text">
+        <div class="crumbs"><span>Live-Charts</span><span class="sep">·</span><span class="ok">aktualisiert alle 30 s</span></div>
+        <h1>Die <em>Bestenlisten</em>.</h1>
+        <p class="lede">Spieler-Rangliste, Auslastungs-Champions, schnellste Server, beliebteste Versionen. Alles aus echten Daten gerechnet.</p>
+      </div>
+      <div></div>
+    </section>
+    <div class="grid">
+      <div class="col">
+        <section class="card">
+          <div class="card-h"><h3>🏆 Top 10 nach Spielern</h3><span class="meta mono">live</span></div>
+          <div class="rank" id="rank-players"></div>
+        </section>
+        <section class="card">
+          <div class="card-h"><h3>🇩🇪 Top deutsche Server</h3><span class="meta mono">DE only</span></div>
+          <div class="rank" id="rank-de"></div>
+        </section>
+      </div>
+      <div class="col">
+        <section class="card">
+          <div class="card-h"><h3>📈 Höchste Auslastung</h3><span class="meta mono">% von Slot-Limit</span></div>
+          <div class="rank" id="rank-load"></div>
+        </section>
+        <section class="card">
+          <div class="card-h"><h3>⚡ Schnellste Server</h3><span class="meta mono">API-Antwortzeit</span></div>
+          <div class="rank" id="rank-fastest"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: TECH ============ -->
+
+  <div class="tab-content" id="tab-tech">
+    <section class="hero">
+      <div class="hero-text">
+        <div class="crumbs"><span>Mojang Manifest</span><span class="sep">·</span><span class="ok">offiziell</span></div>
+        <h1>Tech &amp; <em>Releases</em>.</h1>
+        <p class="lede">Direkt aus dem Mojang-Versions-Manifest geladen: aktuelles Release, Snapshots, Historie. Alles aus erster Hand.</p>
+      </div>
+      <div></div>
+    </section>
+    <div class="grid">
+      <div class="col">
+        <section class="card">
+          <div class="card-h"><h3>Minecraft · Fakten</h3><span class="meta mono" id="fact-meta">—</span></div>
+          <div class="facts">
+            <div class="fact"><div class="lab">Aktuelles Release</div><div class="val mono" id="fact-release">—</div><div class="sub" id="fact-release-sub">lade…</div></div>
+            <div class="fact"><div class="lab">Aktueller Snapshot</div><div class="val mono" id="fact-snapshot">—</div><div class="sub" id="fact-snapshot-sub">—</div></div>
+            <div class="fact"><div class="lab">Releases insgesamt</div><div class="val mono" id="fact-total">—</div><div class="sub">seit Mai 2009</div></div>
+            <div class="fact"><div class="lab">Snapshots insgesamt</div><div class="val mono" id="fact-snaptotal">—</div><div class="sub">+ Pre-releases</div></div>
+            <div class="fact"><div class="lab">Tick-Rate</div><div class="val mono">20 TPS</div><div class="sub">50 ms / Tick</div></div>
+            <div class="fact"><div class="lab">Welt-Höhe</div><div class="val mono">−64 → 320</div><div class="sub">384 Blöcke vertikal</div></div>
+          </div>
+        </section>
+      </div>
+      <div class="col">
+        <section class="card releases">
+          <div class="card-h"><h3>Releases &amp; Snapshots · live</h3><span class="meta mono">Mojang Manifest</span></div>
+          <div id="rel-body"><div class="rel"><div class="body dim mono">Lade Versions-Manifest…</div></div></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: SERVICES ============ -->
+
+  <div class="tab-content" id="tab-services">
+    <section class="hero">
+      <div class="hero-text">
+        <div class="crumbs"><span>Mojang &amp; Microsoft</span><span class="sep">·</span><span class="ok">echte HTTP-Latenz</span></div>
+        <h1>Service <em>Status</em>.</h1>
+        <p class="lede">Latenz wird live im Browser gegen die echten Endpoints gemessen. Wenn etwas down ist, siehst du es hier zuerst.</p>
+      </div>
+      <div></div>
+    </section>
+    <section class="card" style="max-width:760px">
+      <div class="card-h"><h3>Mojang &amp; Microsoft Endpoints</h3><span class="meta mono" id="svc-time">—</span></div>
+      <div id="services-list">
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>Mojang Auth</span></div><div class="lat svc-pending">messe…</div></div>
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>Session Server</span></div><div class="lat svc-pending">messe…</div></div>
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>API (Mojang)</span></div><div class="lat svc-pending">messe…</div></div>
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>Textures CDN</span></div><div class="lat svc-pending">messe…</div></div>
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>Launcher Meta</span></div><div class="lat svc-pending">messe…</div></div>
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>Piston Meta</span></div><div class="lat svc-pending">messe…</div></div>
+        <div class="svc"><div class="n"><span class="status-dot status-pending"></span><span>Xbox Live</span></div><div class="lat svc-pending">messe…</div></div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<!-- Server Detail Modal -->
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- Toast -->
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div>MCPULSE · Inoffizielles Live-Dashboard für die Minecraft-Server-Landschaft.</div>
+  <div>Quellen: <span class="dim">api.mcstatus.io · api.mcsrvstat.us · launchermeta.mojang.com</span></div>
+</footer>
+
+<script>
+/* ================================================================
+   MCPULSE v5 — komplett überarbeitet
+   ----------------------------------------------------------------
+   Datenstrategie: Dual-API mit Fallback
+   1. mcstatus.io (primär — schneller, zuverlässiger)
+   2. mcsrvstat.us (fallback — wenn primär fehlschlägt)
+   3. piston-meta / launchermeta für Versionen
+   ================================================================ */
+
+const SERVERS = [
+  // === Verifizierte deutsche Server ===
+  { name:"GommeHD.net",          host:"gommehd.net",            region:"de",     edition:"java",    modes:["BedWars","CitiBuild","SkyWars","CTF"] },
+  { name:"GrieferGames",         host:"griefergames.net",       region:"de",     edition:"java",    modes:["CityBuild","Survival","Farmwelt"] },
+  { name:"Timolia",              host:"timolia.de",             region:"de",     edition:"java",    modes:["Hide & Seek","SkyPvP","BedWars"] },
+
+  // === EU ===
+  { name:"BlocksMC",             host:"play.blocksmc.com",      region:"eu",     edition:"java",    modes:["BedWars","SkyWars"] },
+  { name:"CubeCraft (Java)",     host:"play.cubecraft.net",     region:"eu",     edition:"java",    modes:["BedWars","SkyWars","Eggwars"] },
+  { name:"PikaNetwork",          host:"play.pika-network.net",  region:"eu",     edition:"java",    modes:["Lifesteal","Survival","BedWars"] },
+  { name:"CraftRise",            host:"play.craftrise.com.tr",  region:"eu",     edition:"java",    modes:["SkyWars","BedWars"] },
+  { name:"ZedarMC",              host:"play.zedarmc.com",       region:"eu",     edition:"java",    modes:["Lifesteal","SMP"] },
+  { name:"OPBlocks",             host:"play.opblocks.com",      region:"eu",     edition:"java",    modes:["Skyblock","Prison"] },
+  { name:"PurplePrison",         host:"play.purpleprison.net",  region:"eu",     edition:"java",    modes:["Prison"] },
+  { name:"Snapcraft",            host:"play.snapcraft.net",     region:"eu",     edition:"java",    modes:["Survival","SMP"] },
+
+  // === Global ===
+  { name:"Hypixel",              host:"mc.hypixel.net",         region:"global", edition:"java",    modes:["BedWars","SkyBlock","Duels","Murder Mystery"] },
+  { name:"Minehut",              host:"play.minehut.com",       region:"global", edition:"java",    modes:["Player-Hosted"] },
+  { name:"FadeCloud",            host:"play.fadecloud.com",     region:"global", edition:"java",    modes:["Skyblock","Prison","KitPvP"] },
+  { name:"AkumaMC",              host:"play.akumamc.net",       region:"global", edition:"java",    modes:["Skyblock","Prison","KitPvP"] },
+  { name:"MineSuperior",         host:"play.minesuperior.com",  region:"global", edition:"java",    modes:["Skyblock","Survival"] },
+  { name:"MineWind",             host:"minewind.com",           region:"global", edition:"java",    modes:["Anarchy","PvP"] },
+  { name:"GamSter",              host:"mc.gamster.org",         region:"global", edition:"java",    modes:["Skyblock","Survival"] },
+  { name:"MineLand",             host:"play.mineland.net",      region:"global", edition:"java",    modes:["Mini-Games","Anarchy"] },
+  { name:"Mineplex",             host:"us.mineplex.com",        region:"global", edition:"java",    modes:["Mini-Games"] },
+
+  // === Bedrock (oft sehr hohe Spielerzahlen) ===
+  { name:"The Hive",             host:"geo.hivebedrock.network",region:"global", edition:"bedrock", modes:["Mini-Games","Murder Mystery","TreasureWars"] },
+  { name:"CubeCraft (Bedrock)",  host:"mco.cubecraft.net",      region:"eu",     edition:"bedrock", modes:["BedWars","SkyWars","Eggwars"] },
+  { name:"Lifeboat (Bedrock)",   host:"mco.lbsg.net",           region:"global", edition:"bedrock", modes:["Survival","Mini-Games"] },
+  { name:"Galaxite (Bedrock)",   host:"play.galaxite.net",      region:"global", edition:"bedrock", modes:["Mini-Games"] }
+];
+
+const $ = q => document.querySelector(q);
+const $$ = q => document.querySelectorAll(q);
+const fmt = n => n==null||isNaN(n) ? "—" : n.toLocaleString("de-DE");
+const fmtCompact = n => {
+  if(n==null||isNaN(n)) return "—";
+  if(n>=1e6) return (n/1e6).toFixed(1)+"M";
+  if(n>=1e4) return (n/1e3).toFixed(0)+"k";
+  if(n>=1e3) return (n/1e3).toFixed(1)+"k";
+  return n.toLocaleString("de-DE");
+};
+const now = () => new Date();
+const pad = n => String(n).padStart(2,"0");
+const hhmmss = d => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const hhmm   = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+setInterval(()=>{ $("#clock").textContent = hhmmss(now()); },1000);
+
+const PLACEHOLDER = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgAQMAAABJtOi3AAAABlBMVEUaGh4eHiI4XwfWAAAAFklEQVQY02NgGAWjYBSMglEwCkbBcAYABXgAAYqEzZIAAAAASUVORK5CYII=";
+
+function detectSoftware(v){
+  if(!v) return "unknown";
+  const s = v.toLowerCase();
+  if(s.includes("paper")) return "Paper";
+  if(s.includes("velocity")) return "Velocity";
+  if(s.includes("waterfall")||s.includes("bungee")) return "BungeeCord";
+  if(s.includes("spigot")) return "Spigot";
+  if(s.includes("purpur")) return "Purpur";
+  if(s.includes("forge")) return "Forge";
+  if(s.includes("fabric")) return "Fabric";
+  if(s.includes("vanilla")) return "Vanilla";
+  if(s.includes("snapcraft")) return "Snapcraft";
+  if(s.includes("proxy")) return "Proxy";
+  if(s.includes("requires")) return "Multi-Version";
+  return "Custom";
+}
+function cleanVersion(v){
+  if(!v) return "";
+  return v.replace(/§./g,'').replace(/[^\x20-\x7E\u00C0-\u017F]/g,'').slice(0,32).trim();
+}
+function cleanMOTD(motd){
+  if(!motd) return "";
+  return motd.replace(/§./g,'').replace(/\u00A7./g,'').trim();
+}
+
+/* === Smart Dual-API Fetcher === */
+async function fetchServerSmart(s){
+  const t0 = performance.now();
+
+  // Versuch 1: mcstatus.io
+  try{
+    const url = s.edition === "bedrock"
+      ? `https://api.mcstatus.io/v2/status/bedrock/${encodeURIComponent(s.host)}?query=false`
+      : `https://api.mcstatus.io/v2/status/java/${encodeURIComponent(s.host)}?query=false`;
+    const r = await fetch(url, { cache:"no-store" });
+    if(!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    const ping = Math.round(performance.now() - t0);
+
+    let ver = "";
+    if(j.version){
+      ver = cleanVersion(j.version.name_clean || j.version.name || "");
+    }
+    let motd = "";
+    if(j.motd){
+      motd = j.motd.clean || j.motd.raw || "";
+      if(typeof motd === "object") motd = "";
+      motd = cleanMOTD(motd);
+    }
+
+    const iconUrl = s.edition==="bedrock" ? null : `https://api.mcstatus.io/v2/icon/${encodeURIComponent(s.host)}`;
+
+    return {
+      ...s,
+      online: !!j.online,
+      players: j.players ? (j.players.online ?? 0) : 0,
+      max:     j.players ? (j.players.max ?? 0) : 0,
+      version: ver,
+      software: detectSoftware(ver),
+      motd:    motd.slice(0,300),
+      icon:    iconUrl,
+      ping:    ping,
+      ip:      j.ip_address || null,
+      port:    j.port || null,
+      source:  "mcstatus.io"
+    };
+  }catch(e){
+    // Fallback: mcsrvstat.us
+    try{
+      const url = s.edition === "bedrock"
+        ? `https://api.mcsrvstat.us/bedrock/3/${encodeURIComponent(s.host)}`
+        : `https://api.mcsrvstat.us/3/${encodeURIComponent(s.host)}`;
+      const r = await fetch(url, { cache:"no-store" });
+      const j = await r.json();
+      const ping = Math.round(performance.now() - t0);
+      const ver = cleanVersion(j.version);
+      let motd = "";
+      if(j.motd && j.motd.clean) motd = (Array.isArray(j.motd.clean) ? j.motd.clean.join("\n") : j.motd.clean);
+      const iconUrl = s.edition==="bedrock" ? null : `https://api.mcsrvstat.us/icon/${encodeURIComponent(s.host)}`;
+      return {
+        ...s,
+        online: !!j.online,
+        players: j.players ? (j.players.online ?? 0) : 0,
+        max:     j.players ? (j.players.max ?? 0) : 0,
+        version: ver,
+        software: detectSoftware(j.version),
+        motd:    cleanMOTD(motd).slice(0,300),
+        icon:    iconUrl,
+        ping:    ping,
+        ip:      j.ip || null,
+        port:    j.port || null,
+        source:  "mcsrvstat.us"
+      };
+    }catch(e2){
+      return { ...s, online:false, players:0, max:0, version:"", software:"unknown", motd:"", icon:null, ping:Math.round(performance.now()-t0), error:true, source:"none" };
+    }
+  }
+}
+
+async function fetchAll(progressCb){
+  const results = new Array(SERVERS.length);
+  let idx = 0, done = 0;
+  const concurrency = 8;
+  async function worker(){
+    while(idx < SERVERS.length){
+      const i = idx++;
+      results[i] = await fetchServerSmart(SERVERS[i]);
+      done++;
+      if(progressCb) progressCb(done, SERVERS.length);
+    }
+  }
+  await Promise.all(Array.from({length:concurrency}, worker));
+  return results;
+}
+
+let allData = [];
+let activeCat = "";
+let searchQ = "";
+
+function regionPill(r){
+  return r==="de" ? '<span class="pill geo-de">DE</span>' :
+         r==="eu" ? '<span class="pill geo-eu">EU</span>' :
+                    '<span class="pill geo-global">Global</span>';
+}
+function editionPill(e){
+  return e==="bedrock" ? '<span class="pill edition-bedrock">Bedrock</span>' : '';
+}
+
+/* === Tab switching === */
+function switchTab(name){
+  $$(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===name));
+  $$(".tab-content").forEach(t=>t.classList.toggle("active", t.id==="tab-"+name));
+  if(name==="discover") renderDiscover();
+  if(name==="rankings") renderRankings();
+}
+$$(".tab").forEach(t=>t.addEventListener("click",()=>switchTab(t.dataset.tab)));
+
+/* === Server Index Table === */
+function renderServers(){
+  const filtered = allData.filter(d=>{
+    if(activeCat==="bedrock"){ if(d.edition!=="bedrock") return false; }
+    else if(activeCat){ if(d.region !== activeCat) return false; }
+    if(searchQ){
+      const q = searchQ.toLowerCase();
+      return d.name.toLowerCase().includes(q) || d.host.toLowerCase().includes(q) || (d.version||"").toLowerCase().includes(q) || (d.software||"").toLowerCase().includes(q) || d.region.includes(q);
+    }
+    return true;
+  });
+  const sorted = [...filtered].sort((a,b)=>{
+    if(a.online && !b.online) return -1;
+    if(!a.online && b.online) return 1;
+    return b.players-a.players;
+  });
+  const onlineMax = Math.max(...sorted.filter(d=>d.online).map(d=>d.players),1);
+
+  const rowsHTML = sorted.length===0
+    ? `<tr><td colspan="7" style="padding:30px;text-align:center" class="dim mono">Keine Treffer.</td></tr>`
+    : sorted.map((d,i)=>{
+    const pct = d.online ? Math.round((d.players/onlineMax)*100) : 0;
+    const pingCls = d.ping<300?"ping-good":d.ping<700?"ping-mid":"ping-bad";
+    return `<tr onclick="openModal('${d.host}')">
+      <td class="dim mono">${String(i+1).padStart(2,"0")}</td>
+      <td><div class="name">
+        <img src="${d.icon||PLACEHOLDER}" onerror="this.src='${PLACEHOLDER}'" alt="" loading="lazy">
+        <div class="txt">
+          <div>${d.online?'<span class="status-dot status-on"></span>':'<span class="status-dot status-off"></span>'}${d.name}</div>
+          <div class="addr">${d.host}</div>
+        </div>
+      </div></td>
+      <td>${regionPill(d.region)} ${editionPill(d.edition)}</td>
+      <td><div class="ver">
+        <div class="dim mono" style="font-size:11.5px">${d.software}</div>
+        <div class="mono" style="font-size:11px;color:var(--ink-mute)">${d.version||"—"}</div>
+      </div></td>
+      <td class="r ${pingCls}">${d.ping} ms</td>
+      <td class="r">${d.online?`<b>${fmt(d.players)}</b><div class="dim" style="font-size:11px">/${fmt(d.max)}</div>`:'<span class="down mono">offline</span>'}</td>
+      <td class="r">${d.online?`<div class="mono dim" style="font-size:11px">${pct}%</div><div class="bar"><i style="width:${pct}%"></i></div>`:'—'}</td>
+    </tr>`;
+  }).join("");
+  $("#srv-body").innerHTML = rowsHTML;
+
+  $("#srv-cards").innerHTML = sorted.length===0
+    ? `<div style="padding:30px;text-align:center" class="dim mono">Keine Treffer.</div>`
+    : sorted.map((d,i)=>{
+    const pct = d.online ? Math.round((d.players/onlineMax)*100) : 0;
+    const pingCls = d.ping<300?"ping-good":d.ping<700?"ping-mid":"ping-bad";
+    return `<div class="srv-card" onclick="openModal('${d.host}')">
+      <img class="ico" src="${d.icon||PLACEHOLDER}" onerror="this.src='${PLACEHOLDER}'" alt="" loading="lazy">
+      <div class="body">
+        <div class="srv-row1">
+          <span class="srv-rank">${String(i+1).padStart(2,"0")}</span>
+          <span class="srv-name">${d.online?'<span class="status-dot status-on"></span>':'<span class="status-dot status-off"></span>'}${d.name}</span>
+          <span class="srv-players">${d.online?fmt(d.players):'<span class="down">off</span>'}</span>
+        </div>
+        <div class="srv-row2">
+          <span class="addr">${d.host}</span>
+          ${regionPill(d.region)}
+          ${editionPill(d.edition)}
+          <span class="${pingCls}">${d.ping}ms</span>
+        </div>
+        ${d.online?`<div class="bar" style="margin-top:9px"><i style="width:${pct}%"></i></div>`:""}
+      </div>
+    </div>`;
+  }).join("");
+
+  $("#srv-count").textContent = filtered.filter(d=>d.online).length;
+  $("#srv-total").textContent = filtered.length;
+}
+
+/* === KPIs === */
+function renderKPIs(data){
+  const online = data.filter(d=>d.online);
+  const totalAll = online.reduce((a,b)=>a+b.players,0);
+  const totalDE  = online.filter(d=>d.region==="de").reduce((a,b)=>a+b.players,0);
+  const totalEU  = online.filter(d=>d.region==="eu").reduce((a,b)=>a+b.players,0);
+  const totalGL  = online.filter(d=>d.region==="global").reduce((a,b)=>a+b.players,0);
+  const totalBE  = online.filter(d=>d.edition==="bedrock").reduce((a,b)=>a+b.players,0);
+  const top      = [...online].sort((a,b)=>b.players-a.players)[0];
+  const pings    = online.map(d=>d.ping).filter(p=>p>0);
+  const avgPing  = pings.length ? Math.round(pings.reduce((a,b)=>a+b,0)/pings.length) : 0;
+  const up       = Math.round((online.length/data.length)*100);
+
+  $("#hero-total").textContent      = fmt(totalAll);
+  $("#hero-de").textContent         = fmt(totalDE);
+  $("#hero-top").textContent        = top ? top.name : "—";
+
+  $("#kpi-servers").textContent     = online.length+"/"+data.length;
+  $("#kpi-up").textContent          = up+"%";
+  $("#kpi-players-de").textContent  = fmt(totalDE);
+  $("#kpi-players-eu").textContent  = fmt(totalEU);
+  $("#kpi-players-global").textContent = fmt(totalGL);
+  $("#kpi-players-bedrock").textContent = fmt(totalBE);
+  $("#kpi-eu-srv").textContent      = online.filter(d=>d.region==="eu").length + " Server";
+  $("#kpi-global-srv").textContent  = online.filter(d=>d.region==="global").length + " Server";
+  $("#kpi-bedrock-srv").textContent = online.filter(d=>d.edition==="bedrock").length + " Server";
+  $("#kpi-ping").textContent        = avgPing+" ms";
+
+  $("#srv-tracked").textContent     = data.length;
+  $("#tab-num-discover").textContent= online.length;
+
+  if(window.__deStart != null){
+    const d = totalDE - window.__deStart;
+    const e = $("#kpi-de-d");
+    e.textContent = (d>=0?"+":"")+fmt(d);
+    e.className = d>=0 ? "up":"down";
+  } else if(totalDE>0) {
+    window.__deStart = totalDE;
+    $("#kpi-de-d").textContent = "±0";
+  }
+
+  // Trend
+  if(history.length>=3){
+    const a = history[history.length-3].total;
+    const b = history[history.length-1].total;
+    const diff = b-a;
+    const cls = diff>=0?"up":"down";
+    $("#hero-trend").innerHTML = `<span class="${cls}">${diff>=0?"+":""}${fmt(diff)}</span>`;
+  }
+
+  $("#updated").textContent = hhmmss(now());
+}
+
+function renderModes(data){
+  const map = {};
+  data.filter(d=>d.online).forEach(d=>{
+    const per = d.players / d.modes.length;
+    d.modes.forEach(m=> map[m] = (map[m]||0)+per );
+  });
+  const arr = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if(arr.length===0){ $("#mode-grid").innerHTML='<div class="mode dim mono">noch keine Daten</div>'; return; }
+  const max = arr[0][1];
+  $("#mode-grid").innerHTML = arr.map(([n,v],i)=>`
+    <div class="mode">
+      <div class="t"><div class="n">${n}</div><div class="p mono">#${i+1}</div></div>
+      <div class="v">${fmt(Math.round(v))}</div>
+      <div class="b bar"><i style="width:${Math.round((v/max)*100)}%"></i></div>
+    </div>`).join("");
+}
+
+/* === Discover Tab === */
+function renderDiscover(){
+  const online = allData.filter(d=>d.online).sort((a,b)=>b.players-a.players);
+  if(online.length===0){
+    $("#discover-grid").innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-mute)" class="mono">Keine Server erreichbar</div>';
+    return;
+  }
+  $("#discover-grid").innerHTML = online.map(d=>{
+    const pct = Math.round((d.players/Math.max(d.max,1))*100);
+    return `<div class="dcard" onclick="openModal('${d.host}')">
+      <div class="h">
+        <img src="${d.icon||PLACEHOLDER}" onerror="this.src='${PLACEHOLDER}'" alt="" loading="lazy">
+        <div class="t">
+          <div class="name">${d.name}</div>
+          <div class="addr">${d.host}</div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="l">Spieler</div><div class="v">${fmtCompact(d.players)}</div></div>
+        <div class="stat"><div class="l">Slots</div><div class="v">${fmtCompact(d.max)}</div></div>
+        <div class="stat"><div class="l">Last</div><div class="v mono">${pct}%</div></div>
+      </div>
+      <div class="footer">
+        <span>${regionPill(d.region)} ${editionPill(d.edition)}</span>
+        <span>${d.software}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* === Rankings Tab === */
+function rankList(items, valueFn, fmtFn){
+  return items.map((d,i)=>{
+    const cls = i<3?'gold':'';
+    return `<div class="rank-row" onclick="openModal('${d.host}')">
+      <span class="pos ${cls}">${String(i+1).padStart(2,"0")}</span>
+      <img src="${d.icon||PLACEHOLDER}" onerror="this.src='${PLACEHOLDER}'" alt="">
+      <span class="name">${d.name}</span>
+      <span class="v">${fmtFn(valueFn(d))}</span>
+    </div>`;
+  }).join("");
+}
+function renderRankings(){
+  const online = allData.filter(d=>d.online);
+  if(online.length===0) return;
+  $("#rank-players").innerHTML = rankList(
+    [...online].sort((a,b)=>b.players-a.players).slice(0,10),
+    d=>d.players, fmt
+  );
+  const de = online.filter(d=>d.region==="de");
+  $("#rank-de").innerHTML = de.length===0
+    ? '<div style="padding:30px;text-align:center" class="dim mono">keine deutschen Server online</div>'
+    : rankList([...de].sort((a,b)=>b.players-a.players).slice(0,10), d=>d.players, fmt);
+  $("#rank-load").innerHTML = rankList(
+    [...online].filter(d=>d.max>0).sort((a,b)=>(b.players/b.max)-(a.players/a.max)).slice(0,10),
+    d=>Math.round((d.players/d.max)*100), v=>v+"%"
+  );
+  $("#rank-fastest").innerHTML = rankList(
+    [...online].sort((a,b)=>a.ping-b.ping).slice(0,10),
+    d=>d.ping, v=>v+" ms"
+  );
+}
+
+/* === Modal === */
+function openModal(host){
+  const d = allData.find(x=>x.host===host);
+  if(!d) return;
+  const pct = d.online && d.max>0 ? Math.round((d.players/d.max)*100) : 0;
+  const motdHTML = d.motd ? `<div class="motd">${d.motd}</div>` : '';
+  $("#modal-content").innerHTML = `
+    <div class="modal-h">
+      <img src="${d.icon||PLACEHOLDER}" onerror="this.src='${PLACEHOLDER}'" alt="">
+      <div class="info">
+        <div class="name">${d.name}</div>
+        <div class="addr">${d.host}${d.port&&d.port!==25565?":"+d.port:""}</div>
+        <button class="copy" onclick="copyAddr('${d.host}')">⧉ Adresse kopieren</button>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats">
+        <div class="mstat"><div class="l">Status</div><div class="v" style="color:${d.online?'var(--accent)':'var(--rose)'}">${d.online?'Online':'Offline'}</div><div class="s">${d.source}</div></div>
+        <div class="mstat"><div class="l">Spieler</div><div class="v">${d.online?fmt(d.players):'—'}</div><div class="s">von ${fmt(d.max)} Slots</div></div>
+        <div class="mstat"><div class="l">Auslastung</div><div class="v mono">${pct}%</div><div class="s">aktuell</div></div>
+        <div class="mstat"><div class="l">API-Antwort</div><div class="v mono">${d.ping} ms</div><div class="s">HTTP-RTT</div></div>
+        <div class="mstat"><div class="l">Software</div><div class="v mono">${d.software}</div><div class="s">erkannt aus Version</div></div>
+        <div class="mstat"><div class="l">IP</div><div class="v mono" style="font-size:14px">${d.ip||'—'}</div><div class="s">aufgelöst via DNS</div></div>
+      </div>
+      ${d.version?`<div style="margin-bottom:14px"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.16em;margin-bottom:6px">Version-String</div><div class="motd">${d.version}</div></div>`:''}
+      ${motdHTML?`<div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.16em;margin-bottom:6px">MOTD</div>${motdHTML}</div>`:''}
+    </div>
+    <div class="modal-footer">
+      <span class="label">${regionPill(d.region)} ${editionPill(d.edition)} · ${d.modes.join(" · ")}</span>
+      <span class="label">live · update 30s</span>
+    </div>
+  `;
+  $("#modal").classList.add("open");
+}
+function closeModal(){ $("#modal").classList.remove("open"); }
+window.openModal = openModal; window.closeModal = closeModal; window.switchTab = switchTab;
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
+
+function copyAddr(addr){
+  navigator.clipboard.writeText(addr).then(()=>{
+    const t = $("#toast");
+    t.textContent = `✓  ${addr} kopiert`;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),2000);
+  });
+}
+window.copyAddr = copyAddr;
+
+/* === Mojang Manifest === */
+async function fetchMojangManifest(){
+  try{
+    const r = await fetch("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json", {cache:"no-store"});
+    return await r.json();
+  }catch(e){ return null; }
+}
+function describeType(t){ return t==="release"?"Release":t==="snapshot"?"Snapshot":t==="old_beta"?"Beta":t==="old_alpha"?"Alpha":t; }
+function formatRelDate(iso){ return new Date(iso).toLocaleDateString("de-DE",{year:"numeric",month:"short",day:"2-digit"}); }
+function renderManifest(j){
+  if(!j){ $("#fact-meta").textContent = "nicht erreichbar"; return; }
+  const releases = j.versions.filter(v=>v.type==="release");
+  const snapshots = j.versions.filter(v=>v.type==="snapshot");
+
+  $("#fact-release").textContent     = j.latest.release;
+  $("#fact-release-sub").textContent = "freigegeben " + formatRelDate(releases[0].releaseTime);
+  $("#fact-snapshot").textContent    = j.latest.snapshot;
+  $("#fact-snapshot-sub").textContent= "freigegeben " + formatRelDate(snapshots[0].releaseTime);
+  $("#fact-total").textContent       = fmt(releases.length);
+  $("#fact-snaptotal").textContent   = fmt(snapshots.length);
+  $("#fact-meta").textContent        = "v" + j.latest.release;
+
+  const list = j.versions.slice(0,60);
+  $("#rel-body").innerHTML = list.map(v=>`
+    <div class="rel">
+      <div class="date">${formatRelDate(v.releaseTime)}</div>
+      <div class="ver">${v.id}</div>
+      <div class="body">
+        <div class="h"><span class="tag tag-${v.type}">${describeType(v.type)}</span></div>
+        <div class="d">Compliance ${v.complianceLevel ?? 0}</div>
+      </div>
+    </div>`).join("");
+}
+
+/* === Service Latenz === */
+const SERVICES = [
+  ["Mojang Auth",       "https://authserver.mojang.com/"],
+  ["Session Server",    "https://sessionserver.mojang.com/"],
+  ["API (Mojang)",      "https://api.mojang.com/"],
+  ["Textures CDN",      "https://textures.minecraft.net/"],
+  ["Launcher Meta",     "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"],
+  ["Piston Meta",       "https://piston-meta.mojang.com/"],
+  ["Xbox Live",         "https://xboxlive.com/"]
+];
+async function measureService(url){
+  const t0 = performance.now();
+  try{ await fetch(url, {mode:"no-cors", cache:"no-store"}); return {ok:true, ms:Math.round(performance.now()-t0)}; }
+  catch(e){ return {ok:false, ms:Math.round(performance.now()-t0)}; }
+}
+async function renderServices(){
+  const promises = SERVICES.map(([name,url])=>measureService(url).then(r=>({name,r})));
+  const results = await Promise.all(promises);
+  $("#services-list").innerHTML = results.map(({name,r})=>{
+    const cls = !r.ok ? "svc-down" : r.ms<300 ? "svc-ok" : r.ms<800 ? "svc-deg" : "svc-down";
+    const dotCls = !r.ok ? "status-off" : r.ms<800 ? "status-on" : "status-off";
+    const lbl = !r.ok ? "unreachable" : r.ms<300 ? "operational" : r.ms<800 ? "degraded" : "slow";
+    return `<div class="svc"><div class="n"><span class="status-dot ${dotCls}"></span><span>${name}</span></div><div class="lat ${cls}">${lbl} · ${r.ms} ms</div></div>`;
+  }).join("");
+  $("#svc-time").textContent = hhmmss(now());
+}
+
+function renderTicker(data){
+  const top = [...data].filter(d=>d.online).sort((a,b)=>b.players-a.players).slice(0,15);
+  if(top.length===0){ $("#ticker").innerHTML = '<span class="ticker-item dim">Verbinde…</span>'; return; }
+  const items = top.map(d=>{
+    let trend = "";
+    if(window.__prevPlayers && window.__prevPlayers[d.host] != null){
+      const diff = d.players - window.__prevPlayers[d.host];
+      if(diff !== 0){
+        const cls = diff>0?"up":"down";
+        trend = ` <span class="${cls}">${diff>0?"▲":"▼"}${Math.abs(diff)}</span>`;
+      }
+    }
+    const rgn = d.region==="de"?"DE":d.region==="eu"?"EU":"GL";
+    return `<div class="ticker-item"><img src="${d.icon||PLACEHOLDER}" onerror="this.style.display='none'"><span class="rgn">${rgn}</span><b>${d.name}</b> ${fmt(d.players)}${trend}</div>`;
+  });
+  $("#ticker").innerHTML = (items.concat(items)).join("");
+
+  const map = {};
+  data.forEach(d=>{ if(d.online) map[d.host] = d.players; });
+  window.__prevPlayers = map;
+}
+
+/* === Charts === */
+const history = [];
+const HISTORY_LEN = 240;
+function pushHistory(data){
+  const online = data.filter(d=>d.online);
+  const total = online.reduce((a,b)=>a+b.players,0);
+  const totalDE = online.filter(d=>d.region==="de").reduce((a,b)=>a+b.players,0);
+  const top5  = [...online].sort((a,b)=>b.players-a.players).slice(0,5).reduce((a,b)=>a+b.players,0);
+  history.push({t:Date.now(), total, totalDE, top5});
+  if(history.length>HISTORY_LEN) history.shift();
+  $("#chart-points").textContent = history.length + " Punkte";
+}
+
+function drawChart(){
+  const c = document.getElementById("mainChart");
+  const ctx = c.getContext("2d");
+  const dpr = window.devicePixelRatio||1;
+  const W = c.clientWidth, H = c.clientHeight;
+  if(W===0||H===0) return;
+  c.width = W*dpr; c.height = H*dpr;
+  ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
+
+  if(history.length<2){
+    ctx.fillStyle="#5a5a60";ctx.font="12px 'JetBrains Mono', monospace";
+    ctx.fillText(history.length===0 ? "Lade Daten…" : "Sammle Datenpunkte… (mind. 2)", 20, H/2);
+    return;
+  }
+
+  const isMobile = W<500;
+  const padL=isMobile?42:54,padR=14,padT=14,padB=26;
+  const w=W-padL-padR,h=H-padT-padB;
+
+  const totals = history.map(p=>p.total);
+  const t5s    = history.map(p=>p.top5);
+  const des    = history.map(p=>p.totalDE);
+  const min = 0;
+  const max = Math.max(...totals)*1.06;
+
+  ctx.strokeStyle="rgba(255,255,255,.04)";ctx.lineWidth=1;
+  ctx.font=(isMobile?"9.5px":"10.5px")+" 'JetBrains Mono', monospace";
+  ctx.fillStyle="#5a5a60";
+  for(let i=0;i<=4;i++){
+    const y=padT+(h*i/4);
+    ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+w,y);ctx.stroke();
+    const v=max-(max-min)*(i/4);
+    ctx.fillText(fmtCompact(Math.round(v)),4,y+3);
+  }
+  for(let i=0;i<=3;i++){
+    const idx=Math.floor((history.length-1)*(i/3));
+    const x=padL+(w*i/3);
+    ctx.fillText(hhmm(new Date(history[idx].t)),x-12,H-7);
+  }
+  const mean=totals.reduce((a,b)=>a+b,0)/totals.length;
+  const yMean=padT+h*(1-(mean-min)/(max-min));
+  ctx.setLineDash([3,4]);ctx.strokeStyle="rgba(255,255,255,.15)";
+  ctx.beginPath();ctx.moveTo(padL,yMean);ctx.lineTo(padL+w,yMean);ctx.stroke();
+  ctx.setLineDash([]);
+
+  function path(values,color,fill){
+    ctx.beginPath();
+    values.forEach((v,i)=>{
+      const x=padL+(w*i/(values.length-1));
+      const y=padT+h*(1-(v-min)/(max-min));
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    if(fill){
+      ctx.lineTo(padL+w,padT+h);ctx.lineTo(padL,padT+h);ctx.closePath();
+      ctx.fillStyle=fill;ctx.fill();
+    }else{
+      ctx.lineWidth=1.8;ctx.strokeStyle=color;ctx.stroke();
+    }
+  }
+  path(totals,null,"rgba(138,255,128,.06)");
+  path(totals,"#8aff80",null);
+  path(t5s,"#ffb547",null);
+  path(des,"#5eb9ff",null);
+
+  const lx=padL+w;
+  const ly=padT+h*(1-(totals[totals.length-1]-min)/(max-min));
+  ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fillStyle="#8aff80";ctx.fill();
+  ctx.beginPath();ctx.arc(lx,ly,9,0,Math.PI*2);ctx.strokeStyle="rgba(138,255,128,.4)";ctx.lineWidth=1.5;ctx.stroke();
+}
+
+function drawHorizontalBars(canvasId, entries, palette){
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext("2d");
+  const dpr=window.devicePixelRatio||1;
+  const W=c.clientWidth,H=c.clientHeight;
+  if(W===0||H===0)return;
+  c.width=W*dpr;c.height=H*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
+
+  if(entries.length===0){
+    ctx.fillStyle="#5a5a60";ctx.font="11px 'JetBrains Mono', monospace";
+    ctx.fillText("noch keine Daten",10,H/2);return;
+  }
+
+  const total = entries.reduce((a,b)=>a+b[1],0)||1;
+  const padL=12,padR=12,padT=8,padB=8;
+  const rowH=(H-padT-padB)/Math.max(entries.length,1);
+  const isMobile=W<380;
+  ctx.font=(isMobile?"11px":"12px")+" 'JetBrains Mono', monospace";
+  entries.forEach(([k,v],i)=>{
+    const y=padT+i*rowH+4;
+    const pct=v/total;
+    const labelW=isMobile?70:90;
+    ctx.fillStyle="#a0a0a4";
+    ctx.fillText(k.length>13?k.slice(0,13):k,padL,y+rowH*0.5+4);
+    const bx=padL+labelW;
+    const bw=W-padR-bx-(isMobile?52:60);
+    ctx.fillStyle="rgba(255,255,255,.04)";
+    ctx.fillRect(bx,y+rowH*0.25,bw,rowH*0.45);
+    ctx.fillStyle = palette[i % palette.length];
+    ctx.fillRect(bx,y+rowH*0.25,bw*pct,rowH*0.45);
+    ctx.fillStyle="#f0f0ee";
+    ctx.fillText((pct*100).toFixed(1)+"%",bx+bw+8,y+rowH*0.5+4);
+  });
+}
+function drawVersionChart(data){
+  const map={};
+  data.filter(d=>d.online).forEach(d=>{
+    const k=(d.version||"unbekannt").match(/1\.\d+/)?.[0]||"andere";
+    map[k]=(map[k]||0)+d.players;
+  });
+  const arr=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  drawHorizontalBars("versionChart", arr, ["#8aff80","#5eb9ff","#ffb547","#c08fff","#ff6b6b","#3b8a4d"]);
+}
+function drawSoftwareChart(data){
+  const map={};
+  data.filter(d=>d.online).forEach(d=>{
+    const k = d.software || "Custom";
+    map[k]=(map[k]||0)+d.players;
+  });
+  const arr=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  drawHorizontalBars("softwareChart", arr, ["#5eb9ff","#8aff80","#c08fff","#ffb547","#ff6b6b","#3b8a4d"]);
+}
+
+function drawGauge(value){
+  const c = document.getElementById("gauge");
+  const ctx = c.getContext("2d");
+  const dpr=window.devicePixelRatio||1;
+  c.width=240*dpr;c.height=140*dpr;
+  ctx.scale(dpr,dpr);ctx.clearRect(0,0,240,140);
+  const cx=120,cy=120,r=96;
+  ctx.lineWidth=14;ctx.lineCap="butt";
+  ctx.strokeStyle="rgba(255,255,255,.05)";
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);ctx.stroke();
+  const ang = Math.PI + Math.PI*(value/100);
+  const grad = ctx.createLinearGradient(0,0,240,0);
+  grad.addColorStop(0,"#5eb9ff");grad.addColorStop(0.5,"#8aff80");grad.addColorStop(1,"#ffb547");
+  ctx.strokeStyle=grad;
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,ang,false);ctx.stroke();
+  ctx.strokeStyle="rgba(255,255,255,.12)";ctx.lineWidth=1;
+  for(let i=0;i<=10;i++){
+    const a = Math.PI + Math.PI*(i/10);
+    const x1=cx+Math.cos(a)*(r-9), y1=cy+Math.sin(a)*(r-9);
+    const x2=cx+Math.cos(a)*(r+9), y2=cy+Math.sin(a)*(r+9);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  }
+  ctx.fillStyle="#5a5a60";ctx.font="10px 'JetBrains Mono', monospace";
+  ctx.fillText("ruhig",4,134);ctx.fillText("normal",100,32);ctx.fillText("hype",212,134);
+}
+function calcHype(data){
+  const online = data.filter(d=>d.online);
+  if(online.length===0) return 0;
+  const total  = online.reduce((a,b)=>a+b.players,0);
+  const cap    = online.reduce((a,b)=>a+b.max,0)||1;
+  const load   = (total/cap);
+  const upRate = online.length/data.length;
+  let trend = 0;
+  if(history.length>=3){
+    const old = history[Math.max(0,history.length-6)].total || 1;
+    trend = Math.max(0, (history[history.length-1].total - old) / old);
+  }
+  return Math.max(5, Math.min(100, Math.round(load*55 + upRate*30 + trend*250 + 8)));
+}
+function renderHype(data){
+  const v = calcHype(data);
+  drawGauge(v);
+  $("#hype-val").textContent = v;
+  $("#hype-label").textContent = v<25?"ruhig":v<50?"normal":v<75?"aktiv":"hype-wave";
+  let trendLbl = "stabil";
+  if(history.length>=3){
+    const a = history[history.length-3].total;
+    const b = history[history.length-1].total;
+    if(b>a*1.02) trendLbl = "steigend";
+    else if(b<a*0.98) trendLbl = "fallend";
+  }
+  $("#hype-trend").textContent = trendLbl;
+}
+
+$("#search").addEventListener("input", e => { searchQ = e.target.value; renderServers(); });
+$$(".chip").forEach(b => b.addEventListener("click", e => {
+  $$(".chip").forEach(x=>x.classList.remove("on"));
+  e.target.classList.add("on");
+  activeCat = e.target.dataset.cat;
+  renderServers();
+}));
+
+/* === Boot === */
+async function tick(first=false){
+  if(first) $("#status-text").textContent = `Lade ${SERVERS.length} Server…`;
+  const data = await fetchAll((done,total)=>{
+    if(first) $("#status-text").textContent = `${done}/${total} geladen`;
+  });
+  allData = data;
+  pushHistory(data);
+
+  renderKPIs(data);
+  renderServers();
+  renderModes(data);
+  renderTicker(data);
+  drawChart();
+  drawVersionChart(data);
+  drawSoftwareChart(data);
+  renderHype(data);
+
+  // Re-render aktuelle Tabs falls offen
+  if($("#tab-discover").classList.contains("active")) renderDiscover();
+  if($("#tab-rankings").classList.contains("active")) renderRankings();
+
+  if(first) $("#status-text").textContent = "Live";
+}
+
+let resizeTimer;
+window.addEventListener("resize", ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{ drawChart(); drawVersionChart(allData); drawSoftwareChart(allData); renderHype(allData); },120);
+});
+window.addEventListener("orientationchange", ()=>setTimeout(()=>{ drawChart(); },200));
+
+(async ()=>{
+  // Parallel: Services und Manifest laden, gleichzeitig Server abfragen
+  renderServices();
+  fetchMojangManifest().then(renderManifest);
+  await tick(true);
+
+  setInterval(()=>tick(false), 30000);
+  setInterval(renderServices, 60000);
+  setInterval(()=>fetchMojangManifest().then(renderManifest), 5*60*1000);
+})();
+</script>
+
+</body>
+</html>
