@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080b10">
+<title>MC Dashboard · Live Pro</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E⛏%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080b10;--bg2:#0d1117;--bg3:#111822;--bg4:#16202e;--bg5:#1c2738;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --green:#00e676;--green2:#00c853;
+  --red:#ff1744;--orange:#ff6d00;--blue:#2979ff;
+  --cyan:#00e5ff;--yellow:#ffd600;--purple:#d500f9;--pink:#f50057;
+  --text:#e8edf5;--text2:#8fa3b8;--text3:#4a6070;--text4:#2d3a4a;
+  --r-sm:6px;--r-md:8px;--r-lg:12px;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,230,118,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,.022) 1px,transparent 1px);background-size:32px 32px}
+body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:min(800px,100vw);height:400px;z-index:0;pointer-events:none;background:radial-gradient(ellipse,rgba(0,230,118,.06) 0%,transparent 70%)}
+.root{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 12px 80px}
+
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 4px 16px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap;gap:10px;position:sticky;top:0;background:rgba(8,11,16,.92);z-index:50;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{font-size:26px;filter:drop-shadow(0 0 10px rgba(0,230,118,.5));animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.brand-txt{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;line-height:1}
+.brand-sub{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:3px;color:var(--green);margin-top:3px}
+.h-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.live-pill{display:flex;align-items:center;gap:6px;padding:6px 11px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.5px}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.8s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.85)}}
+.btn-icon{display:flex;align-items:center;gap:5px;padding:6px 11px;background:transparent;border:1px solid var(--border2);border-radius:var(--r-md);color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;cursor:pointer;transition:all .2s}
+.btn-icon:hover{border-color:var(--green);color:var(--green)}
+.btn-icon.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.err-banner{background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.25);border-radius:var(--r-md);padding:10px 14px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ff8a90;display:flex;align-items:center;gap:8px}
+
+.ticker{overflow:hidden;background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.1);border-radius:var(--r-md);padding:9px 0;margin-bottom:16px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ticker-track{display:flex;white-space:nowrap;animation:tick 60s linear infinite;width:max-content}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);padding:0 26px;flex-shrink:0}
+.ticker-item strong{color:var(--green)}
+
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.hero-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;position:relative;overflow:hidden;transition:transform .2s}
+.hero-card:hover{transform:translateY(-1px)}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.hero-card.cg{border-color:rgba(0,230,118,.15)}.hero-card.cg::before{background:linear-gradient(90deg,transparent,var(--green),transparent);box-shadow:0 0 14px rgba(0,230,118,.3)}
+.hero-card.cb{border-color:rgba(41,121,255,.15)}.hero-card.cb::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);box-shadow:0 0 14px rgba(41,121,255,.3)}
+.hero-card.cy{border-color:rgba(255,214,0,.15)}.hero-card.cy::before{background:linear-gradient(90deg,transparent,var(--yellow),transparent);box-shadow:0 0 14px rgba(255,214,0,.3)}
+.hero-card.co{border-color:rgba(255,109,0,.15)}.hero-card.co::before{background:linear-gradient(90deg,transparent,var(--orange),transparent)}
+.hero-card.cp{border-color:rgba(213,0,249,.15)}.hero-card.cp::before{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
+.hero-card.cc{border-color:rgba(0,229,255,.15)}.hero-card.cc::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.hero-card.cr{border-color:rgba(255,23,68,.15)}.hero-card.cr::before{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.hero-card.cpk{border-color:rgba(245,0,87,.15)}.hero-card.cpk::before{background:linear-gradient(90deg,transparent,var(--pink),transparent)}
+.hc-icon{font-size:20px;margin-bottom:6px;display:block}
+.hc-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.hc-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;line-height:1;letter-spacing:.5px}
+.hc-val.cg{color:var(--green);text-shadow:0 0 18px rgba(0,230,118,.4)}
+.hc-val.cb{color:var(--blue);text-shadow:0 0 18px rgba(41,121,255,.4)}
+.hc-val.cy{color:var(--yellow);text-shadow:0 0 18px rgba(255,214,0,.4)}
+.hc-val.co{color:var(--orange);text-shadow:0 0 18px rgba(255,109,0,.4)}
+.hc-val.cp{color:var(--purple);text-shadow:0 0 18px rgba(213,0,249,.4)}
+.hc-val.cc{color:var(--cyan);text-shadow:0 0 18px rgba(0,229,255,.4)}
+.hc-val.cr{color:var(--red);text-shadow:0 0 18px rgba(255,23,68,.4)}
+.hc-val.cpk{color:var(--pink);text-shadow:0 0 18px rgba(245,0,87,.4)}
+.hc-sub{font-size:11px;color:var(--text3);margin-top:4px}
+
+.section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.my-card{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(0,230,118,.18);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:18px;position:relative;overflow:hidden}
+.my-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.6}
+.my-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.ip-input{flex:1;min-width:180px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-md);padding:11px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s}
+.ip-input::placeholder{color:var(--text3)}
+.ip-input:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(0,230,118,.1)}
+.btn-primary{padding:11px 20px;background:var(--green);color:#000;border:none;border-radius:var(--r-md);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-primary:hover:not(:disabled){background:var(--green2);box-shadow:0 0 14px rgba(0,230,118,.3)}
+.btn-primary:disabled{opacity:.5;cursor:wait}
+.btn-secondary{padding:11px 20px;background:var(--bg);color:var(--green);border:1px solid var(--green);border-radius:var(--r-md);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-secondary:hover{background:rgba(0,230,118,.1)}
+.my-stats{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.ms-stat{text-align:center;min-width:50px}
+.ms-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--green);display:block;line-height:1}
+.ms-val.off{color:var(--red);font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;margin-top:4px}
+.ms-val.small{font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--yellow);margin-top:4px}
+.ms-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1.8px;color:var(--text3);text-transform:uppercase;margin-top:3px;display:block}
+.my-empty{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+.my-history-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.my-hist-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 9px;background:var(--bg);border:1px solid var(--border);border-radius:100px;color:var(--text2);cursor:pointer;transition:all .15s}
+.my-hist-tag:hover{border-color:var(--green);color:var(--green)}
+.my-hist-tag .x{margin-left:6px;color:var(--text3)}
+.my-hist-tag .x:hover{color:var(--red)}
+
+/* ADD SERVER MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;padding:14px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r-lg);padding:20px;max-width:420px;width:100%;animation:modalIn .25s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;letter-spacing:1px}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+.modal-field{margin-bottom:12px}
+.modal-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;display:block}
+.modal-input,.modal-select{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-sm);padding:9px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none}
+.modal-input:focus,.modal-select:focus{border-color:var(--green)}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.modal-btn{flex:1;padding:10px;border-radius:var(--r-sm);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.modal-btn.primary{background:var(--green);color:#000;border:none}
+.modal-btn.primary:hover{background:var(--green2)}
+.modal-btn.secondary{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.modal-btn.secondary:hover{border-color:var(--text2);color:var(--text)}
+.modal-checkbox-row{display:flex;flex-wrap:wrap;gap:6px}
+.mode-chip{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;text-transform:uppercase;padding:5px 9px;border-radius:var(--r-sm);cursor:pointer;color:var(--text3);background:var(--bg);border:1px solid var(--border);user-select:none;transition:all .15s}
+.mode-chip:hover{border-color:var(--text2)}
+.mode-chip.active{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--green)}
+
+.main-grid{display:grid;grid-template-columns:1fr 320px;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr}}
+
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);background:var(--bg3);gap:8px;flex-wrap:wrap}
+.p-title{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
+.pt-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pt-dot.g{background:var(--green);box-shadow:0 0 6px var(--green)}
+.pt-dot.b{background:var(--blue);box-shadow:0 0 6px var(--blue)}
+.pt-dot.y{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.pt-dot.p{background:var(--purple);box-shadow:0 0 6px var(--purple)}
+.pt-dot.c{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.pt-dot.o{background:var(--orange);box-shadow:0 0 6px var(--orange)}
+.p-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid var(--border);border-radius:100px;color:var(--text3)}
+.p-badge.live{background:rgba(0,230,118,.08);border-color:rgba(0,230,118,.2);color:var(--green)}
+.p-actions{display:flex;gap:6px}
+.p-mini-btn{font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 9px;background:transparent;border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.5px}
+.p-mini-btn:hover{border-color:var(--green);color:var(--green)}
+.p-mini-btn.add:hover{border-color:var(--green);background:rgba(0,230,118,.08);color:var(--green)}
+
+.filter-bar{padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;flex-direction:column;gap:8px}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.filter-search{flex:1;min-width:140px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 11px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none}
+.filter-search::placeholder{color:var(--text3)}
+.filter-search:focus{border-color:var(--green)}
+.filter-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-right:4px;flex-shrink:0}
+.f-btn{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:4px 9px;border-radius:var(--r-sm);cursor:pointer;color:var(--text3);transition:all .15s;border:1px solid transparent;user-select:none;white-space:nowrap;flex-shrink:0;background:transparent}
+.f-btn:hover{color:var(--text2);background:rgba(255,255,255,0.03)}
+.f-btn.active{background:rgba(0,230,118,.08);border-color:rgba(0,230,118,.2);color:var(--green)}
+.f-btn.de{color:#ffd600}
+.f-btn.de.active{background:rgba(255,214,0,.12);border-color:rgba(255,214,0,.3);color:var(--yellow)}
+.f-btn.pvp.active{background:rgba(255,23,68,.1);border-color:rgba(255,23,68,.25);color:var(--red)}
+.f-btn.fac.active{background:rgba(213,0,249,.1);border-color:rgba(213,0,249,.25);color:var(--purple)}
+.f-btn.bw.active{background:rgba(41,121,255,.1);border-color:rgba(41,121,255,.25);color:var(--blue)}
+.f-btn.sb.active{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.25);color:var(--cyan)}
+.f-btn.mg.active{background:rgba(255,109,0,.1);border-color:rgba(255,109,0,.25);color:var(--orange)}
+.filter-stats{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text2);padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:100px;flex-shrink:0}
+
+.s-list{padding:6px;max-height:none}
+.s-row{display:grid;grid-template-columns:32px 36px 1fr auto auto 8px;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r-md);transition:background .15s;animation:fadein .35s ease both;cursor:pointer}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.s-row:hover,.s-row.expanded{background:var(--bg3)}
+.s-row.expanded{border-left:2px solid var(--green)}
+.s-row.custom{border-left:2px solid var(--purple)}
+.s-rank{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);text-align:center}
+.s-rank.r1{color:#ffd600;font-weight:700}.s-rank.r2{color:#c0c8d0;font-weight:700}.s-rank.r3{color:#cd7f32;font-weight:700}
+.s-icon{width:36px;height:36px;border-radius:var(--r-sm);object-fit:cover;background:var(--bg4);border:1px solid var(--border);flex-shrink:0;image-rendering:pixelated}
+.s-icon-fb{width:36px;height:36px;border-radius:var(--r-sm);background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.s-info{min-width:0;display:flex;flex-direction:column;gap:1px}
+.s-name-row{display:flex;align-items:center;gap:6px}
+.s-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-flag{font-size:11px;flex-shrink:0}
+.s-tags{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-bars{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:60px}
+.s-bar-bg{width:60px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.s-bar-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.s-bar-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-align:right}
+.s-players{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--green);text-align:right;white-space:nowrap;min-width:50px}
+.s-players.off{color:var(--red);font-size:11px;font-weight:500;font-family:'JetBrains Mono',monospace}
+.s-players.loading{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:13px}
+.dot-status{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-status.on{background:var(--green);box-shadow:0 0 5px var(--green)}
+.dot-status.off{background:var(--red)}
+.dot-status.loading{background:var(--text3);animation:blink 1.5s infinite}
+
+.s-pagination{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg3);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);gap:8px;flex-wrap:wrap}
+.page-btns{display:flex;gap:4px}
+.page-btn{padding:5px 10px;background:transparent;border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text2);font-family:inherit;font-size:10px;cursor:pointer;transition:all .15s}
+.page-btn:hover:not(:disabled){border-color:var(--green);color:var(--green)}
+.page-btn:disabled{opacity:.3;cursor:not-allowed}
+.page-btn.active{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+
+.s-detail{grid-column:1/-1;padding:12px 14px 14px 50px;background:var(--bg);border-top:1px solid var(--border);border-radius:0 0 var(--r-md) var(--r-md);animation:expand .25s ease}
+@keyframes expand{from{opacity:0;max-height:0}to{opacity:1;max-height:400px}}
+.det-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-bottom:10px}
+.det-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);font-weight:600}
+.det-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.det-motd{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);white-space:pre-wrap;word-break:break-word;margin-top:6px}
+.det-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.det-action{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:5px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text2);cursor:pointer;transition:all .15s}
+.det-action:hover{border-color:var(--green);color:var(--green)}
+.det-action.copied{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.det-action.delete:hover{border-color:var(--red);color:var(--red)}
+
+.sidebar{display:flex;flex-direction:column;gap:14px}
+.kv-list{padding:11px 16px;display:flex;flex-direction:column;gap:9px}
+.kv-row{display:flex;align-items:center;gap:8px}
+.kv-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);width:60px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kv-bg{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.kv-fill{height:100%;border-radius:3px;transition:width 1.2s ease}
+.kv-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);width:32px;text-align:right}
+.kv-cnt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);width:36px;text-align:right;font-weight:600}
+
+.geo-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.geo-flag{font-size:18px;flex-shrink:0}
+.geo-name{flex:1;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2)}
+.geo-cnt{font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;font-size:11px}
+.geo-bar{width:50px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.geo-bar-fill{height:100%;background:var(--green);border-radius:2px}
+
+.gm-grid{padding:11px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.gm-tile{padding:9px 11px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);transition:border-color .2s}
+.gm-tile:hover{border-color:var(--green)}
+.gm-icon{font-size:16px;margin-bottom:4px}
+.gm-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);font-weight:600}
+.gm-cnt{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--green);line-height:1;margin-top:3px}
+.gm-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:1px}
+
+.chart-pad{padding:14px 16px}
+canvas{display:block;width:100%!important}
+
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px}
+.info-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px}
+.info-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.info-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--text);line-height:1.2}
+.info-sub{font-size:11px;color:var(--text3);margin-top:4px}
+
+.timeline{padding:14px 18px;max-height:500px;overflow-y:auto}
+.tl-item{position:relative;padding:8px 0 8px 20px;border-left:2px solid var(--border);margin-left:6px}
+.tl-item:last-child{border-left-color:transparent}
+.tl-item::before{content:'';position:absolute;left:-7px;top:13px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--green);box-shadow:0 0 8px rgba(0,230,118,.4)}
+.tl-item.major::before{background:var(--yellow);border-color:var(--yellow);box-shadow:0 0 10px rgba(255,214,0,.6)}
+.tl-year{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);font-weight:700;letter-spacing:1px}
+.tl-item.major .tl-year{color:var(--yellow)}
+.tl-title{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;color:var(--text);margin-top:2px}
+.tl-desc{font-size:11px;color:var(--text3);margin-top:2px}
+
+.rank-list{padding:6px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-sm)}
+.rank-item:hover{background:var(--bg3)}
+.rank-num{font-family:'JetBrains Mono',monospace;font-size:11px;width:24px;text-align:center;font-weight:700}
+.rank-num.r1{color:#ffd600}.rank-num.r2{color:#c0c8d0}.rank-num.r3{color:#cd7f32}
+.rank-name{flex:1;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);font-weight:600}
+
+.footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.f-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+.f-text a{color:var(--text2);text-decoration:none}
+.f-text a:hover{color:var(--green)}
+
+.no-data{padding:18px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+
+@media(max-width:600px){
+  .root{padding:0 10px 80px}.header{padding:12px 4px 14px}
+  .brand-txt{font-size:18px}
+  .hero{grid-template-columns:1fr 1fr;gap:8px}
+  .hero-card{padding:12px 14px}.hc-val{font-size:22px}.hc-icon{font-size:18px}
+  .filter-bar{padding:8px 10px;gap:6px}
+  .f-btn{font-size:8.5px;padding:4px 7px}
+  .filter-search{font-size:11px;padding:5px 9px}
+  .s-row{grid-template-columns:26px 32px 1fr auto auto 6px;gap:6px;padding:7px 8px}
+  .s-icon,.s-icon-fb{width:32px;height:32px;font-size:16px}
+  .s-name{font-size:12px}.s-tags{font-size:9.5px}
+  .s-bars{display:none}.s-players{font-size:16px;min-width:42px}
+  .my-stats{gap:14px}.ms-val{font-size:18px}
+  .panel-head{padding:10px 12px}.kv-list,.geo-row{padding:10px 12px}
+  .ticker-item{padding:0 18px;font-size:10px}
+  .gm-grid{grid-template-columns:1fr 1fr;padding:10px}
+  .modal{padding:16px}
+}
+
+::-webkit-scrollbar{width:6px;height:6px;background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text4)}
+</style>
+
+</head>
+<body>
+<div class="root">
+
+<header class="header">
+  <div class="brand">
+    <span class="brand-icon">⛏</span>
+    <div>
+      <div class="brand-txt">MC DASHBOARD</div>
+      <div class="brand-sub">PRO · LIVE · ECHTZEIT</div>
+    </div>
+  </div>
+  <div class="h-right">
+    <div class="live-pill"><div class="dot-live"></div><span id="updateTime">Lädt…</span></div>
+    <button class="btn-icon" onclick="openAddModal()" title="Server hinzufügen">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      ADD
+    </button>
+    <button class="btn-icon" id="btnRefresh" onclick="refreshAll()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+    </button>
+  </div>
+</header>
+
+<div id="errBanner" style="display:none" class="err-banner"></div>
+
+<div class="ticker"><div class="ticker-track" id="ticker"><span class="ticker-item">⛏ Lade Live-Daten…</span></div></div>
+
+<div class="hero">
+  <div class="hero-card cg"><span class="hc-icon">🌍</span><div class="hc-label">Online Global</div><div class="hc-val cg">~3.2M</div><div class="hc-sub">Täglich aktiv</div></div>
+  <div class="hero-card cb"><span class="hc-icon">📡</span><div class="hc-label">Spieler Live</div><div class="hc-val cb" id="hTotal">…</div><div class="hc-sub" id="hOnlineCnt">Lade…</div></div>
+  <div class="hero-card cy"><span class="hc-icon">🏆</span><div class="hc-label">Größter Server</div><div class="hc-val cy" id="hTop">…</div><div class="hc-sub" id="hTopName">–</div></div>
+  <div class="hero-card cp"><span class="hc-icon">⚡</span><div class="hc-label">Avg. Last</div><div class="hc-val cp" id="hAvgLoad">…</div><div class="hc-sub">Spieler / Server</div></div>
+  <div class="hero-card cc"><span class="hc-icon">🎮</span><div class="hc-label">Slots Frei</div><div class="hc-val cc" id="hSlots">…</div><div class="hc-sub">Verfügbar gesamt</div></div>
+  <div class="hero-card cr"><span class="hc-icon">🔥</span><div class="hc-label">Auslastung</div><div class="hc-val cr" id="hFillPct">…</div><div class="hc-sub">% der Slots belegt</div></div>
+  <div class="hero-card cpk"><span class="hc-icon">🚀</span><div class="hc-label">Schnellster</div><div class="hc-val cpk" id="hFastest" style="font-size:18px">…</div><div class="hc-sub" id="hFastestPing">– ms</div></div>
+  <div class="hero-card co"><span class="hc-icon">💿</span><div class="hc-label">MC Verkäufe</div><div class="hc-val co">300M+</div><div class="hc-sub">Stand 2024 · Mojang</div></div>
+</div>
+
+<div class="section-label">⚡ Mein Server prüfen</div>
+<div class="my-card">
+  <div class="my-row">
+    <input class="ip-input" id="myIp" type="text" placeholder="play.meinserver.de  oder  IP:Port" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button class="btn-primary" id="btnCheck" onclick="checkMyServer()">PRÜFEN</button>
+    <button class="btn-secondary" onclick="addMyServerToList()" id="btnAddMy" style="display:none">+ ZUR LISTE</button>
+  </div>
+  <div class="my-stats" id="myStats"><div class="my-empty">IP eingeben → PRÜFEN drücken</div></div>
+  <div class="my-history-row" id="myHistRow" style="display:none"></div>
+</div>
+
+<div class="main-grid">
+  <div class="panel">
+    <div class="panel-head">
+      <div class="p-title"><div class="pt-dot g"></div>Server Liste</div>
+      <div class="p-actions">
+        <button class="p-mini-btn add" onclick="openAddModal()">+ HINZUFÜGEN</button>
+        <span class="p-badge live" id="serverBadge">Lädt…</span>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-row">
+        <input class="filter-search" id="searchInput" type="text" placeholder="🔍 Name, IP, Modus oder Land suchen…" autocomplete="off" autocapitalize="off">
+        <span class="filter-stats" id="filterStats">– von –</span>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Region:</span>
+        <div class="f-btn active" data-filter="all" onclick="setFilter('region','all')">Alle</div>
+        <div class="f-btn de" data-filter="de" onclick="setFilter('region','de')">🇩🇪 DE</div>
+        <div class="f-btn" data-filter="eu" onclick="setFilter('region','eu')">🇪🇺 EU</div>
+        <div class="f-btn" data-filter="us" onclick="setFilter('region','us')">🇺🇸 US</div>
+        <div class="f-btn" data-filter="online" onclick="setFilter('region','online')">🟢 Online</div>
+        <div class="f-btn" data-filter="custom" onclick="setFilter('region','custom')">⭐ Eigene</div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Modus:</span>
+        <div class="f-btn active" data-mode="all" onclick="setFilter('mode','all')">Alle</div>
+        <div class="f-btn pvp" data-mode="pvp" onclick="setFilter('mode','pvp')">⚔ PvP</div>
+        <div class="f-btn fac" data-mode="factions" onclick="setFilter('mode','factions')">🏰 Factions</div>
+        <div class="f-btn bw" data-mode="bedwars" onclick="setFilter('mode','bedwars')">🛏 BedWars</div>
+        <div class="f-btn sb" data-mode="skyblock" onclick="setFilter('mode','skyblock')">☁ SkyBlock</div>
+        <div class="f-btn sb" data-mode="skywars" onclick="setFilter('mode','skywars')">🏝 SkyWars</div>
+        <div class="f-btn mg" data-mode="minigames" onclick="setFilter('mode','minigames')">🎯 MiniGames</div>
+        <div class="f-btn pvp" data-mode="prison" onclick="setFilter('mode','prison')">⛓ Prison</div>
+        <div class="f-btn" data-mode="survival" onclick="setFilter('mode','survival')">🌳 Survival</div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Sortieren:</span>
+        <div class="f-btn active" data-sort="players" onclick="setFilter('sort','players')">↓ Spieler</div>
+        <div class="f-btn" data-sort="players-asc" onclick="setFilter('sort','players-asc')">↑ Spieler</div>
+        <div class="f-btn" data-sort="name" onclick="setFilter('sort','name')">A–Z</div>
+        <div class="f-btn" data-sort="ping" onclick="setFilter('sort','ping')">⚡ Ping</div>
+        <div class="f-btn" data-sort="founded-old" onclick="setFilter('sort','founded-old')">📅 Älteste</div>
+        <div class="f-btn" data-sort="founded-new" onclick="setFilter('sort','founded-new')">🆕 Neueste</div>
+        <div class="f-btn" data-sort="capacity" onclick="setFilter('sort','capacity')">💺 Größe</div>
+      </div>
+    </div>
+    <div class="s-list" id="serverList"><div class="no-data">Initialisiere…</div></div>
+    <div class="s-pagination" id="pagination" style="display:none">
+      <span id="pageInfo">–</span>
+      <div class="page-btns" id="pageBtns"></div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="panel">
+      <div class="panel-head"><div class="p-title"><div class="pt-dot b"></div>Top Server (Live)</div><span class="p-badge live">Top 10</span></div>
+      <div class="rank-list" id="rankList"><div class="no-data">Lade…</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="p-title"><div class="pt-dot b"></div>Client-Versionen</div><span class="p-badge live">Live</span></div>
+      <div class="kv-list" id="verList"><div class="no-data">Lade…</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="p-title"><div class="pt-dot p"></div>Server-Software</div><span class="p-badge live">Live</span></div>
+      <div class="kv-list" id="swList"><div class="no-data">Lade…</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="p-title"><div class="pt-dot c"></div>Region · Spieler</div></div>
+      <div class="kv-list" id="geoList"><div class="no-data">Lade…</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="p-title"><div class="pt-dot g"></div>Spieler-Verlauf</div></div>
+      <div class="chart-pad">
+        <canvas id="histChart" height="80"></canvas>
+        <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:6px">
+          <span id="histStart">–</span>
+          <span id="histPeak" style="color:var(--yellow)">–</span>
+          <span id="histNow" style="color:var(--green)">–</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom:14px">
+  <div class="panel-head"><div class="p-title"><div class="pt-dot o"></div>Beliebte Spielmodi · Server-Verteilung</div><span class="p-badge live">Live</span></div>
+  <div class="gm-grid" id="gmGrid"><div class="no-data" style="grid-column:1/-1">Lade…</div></div>
+</div>
+
+<div class="panel" style="margin-bottom:14px">
+  <div class="panel-head"><div class="p-title"><div class="pt-dot y"></div>MC Verkäufe · Wachstum (Mio. Exemplare)</div><span class="p-badge">Mojang offiziell</span></div>
+  <div class="chart-pad"><canvas id="salesChart" height="180"></canvas></div>
+</div>
+
+<div class="panel" style="margin-bottom:14px">
+  <div class="panel-head"><div class="p-title"><div class="pt-dot y"></div>Minecraft Timeline · Wichtige Meilensteine</div></div>
+  <div class="timeline">
+    <div class="tl-item major"><div class="tl-year">2009</div><div class="tl-title">Cave Game / Pre-Alpha</div><div class="tl-desc">Notch (Markus Persson) startet Entwicklung am 10. Mai · Erste öffentliche Version 17. Mai</div></div>
+    <div class="tl-item"><div class="tl-year">2010</div><div class="tl-title">Indev & Infdev Phase</div><div class="tl-desc">Infinite Worlds, Survival, Health-System, Mobs eingeführt</div></div>
+    <div class="tl-item"><div class="tl-year">2011</div><div class="tl-title">Beta · Mojang gegründet</div><div class="tl-desc">Adventure-Mode, The Nether, Wölfe, MINECON 2011</div></div>
+    <div class="tl-item major"><div class="tl-year">2011</div><div class="tl-title">🎉 Vollversion 1.0 Release</div><div class="tl-desc">18. November 2011 · The End, Ender Dragon, Enchantments</div></div>
+    <div class="tl-item"><div class="tl-year">2012</div><div class="tl-title">Pretty Scary Update</div><div class="tl-desc">Witches, Bats, Wither, Anvils · Pi Edition für Raspberry Pi</div></div>
+    <div class="tl-item"><div class="tl-year">2013</div><div class="tl-title">Redstone Update</div><div class="tl-desc">Hopper, Comparator, Daylight Sensor · 1.6 mit Pferden</div></div>
+    <div class="tl-item major"><div class="tl-year">2014</div><div class="tl-title">💰 Microsoft kauft Mojang</div><div class="tl-desc">15. September für 2.5 Milliarden Dollar · Notch verlässt das Studio</div></div>
+    <div class="tl-item"><div class="tl-year">2015</div><div class="tl-title">Combat Update</div><div class="tl-desc">Schilde, Dual-Wield, Frost Walker · Windows 10 Edition</div></div>
+    <div class="tl-item major"><div class="tl-year">2016</div><div class="tl-title">Bedrock Edition Start</div><div class="tl-desc">Plattform-übergreifendes Multiplayer · Add-Ons & Marketplace</div></div>
+    <div class="tl-item"><div class="tl-year">2017</div><div class="tl-title">World of Color Update</div><div class="tl-desc">Konsolen-Editionen werden zu Bedrock konvergiert · Glazed Terracotta</div></div>
+    <div class="tl-item"><div class="tl-year">2018</div><div class="tl-title">Update Aquatic</div><div class="tl-desc">Ozeane überarbeitet · Phantome, Tridents, Dolphins, Turtles</div></div>
+    <div class="tl-item"><div class="tl-year">2019</div><div class="tl-title">Village & Pillage</div><div class="tl-desc">Neue Dorf-Designs, Pillager-Raids, Crossbow, Bambus</div></div>
+    <div class="tl-item major"><div class="tl-year">2020</div><div class="tl-title">🦠 Covid-Boom · Nether Update</div><div class="tl-desc">Spielerzahlen explodieren · Piglins, Nether-Biome, Netherite</div></div>
+    <div class="tl-item"><div class="tl-year">2021</div><div class="tl-title">Caves & Cliffs Update</div><div class="tl-desc">Neue Höhlen, Geode, Goat, Axolotl · 2 Teile (1.17 + 1.18)</div></div>
+    <div class="tl-item"><div class="tl-year">2022</div><div class="tl-title">The Wild Update</div><div class="tl-desc">Mangroven, Frösche, Allay, Ancient Cities, Warden, Sculk</div></div>
+    <div class="tl-item major"><div class="tl-year">2023</div><div class="tl-title">🏆 300M Verkäufe erreicht</div><div class="tl-desc">Trails & Tales · Sniffer, Cherry Grove, Archaeology, Camel</div></div>
+    <div class="tl-item"><div class="tl-year">2024</div><div class="tl-title">Tricky Trials · 1.21</div><div class="tl-desc">Trial Chamber, Breeze Mob, Mace, Wolf-Variants, Wind-Charge</div></div>
+    <div class="tl-item major"><div class="tl-year">2025</div><div class="tl-title">🎬 A Minecraft Movie</div><div class="tl-desc">Kinofilm Release April 2025 · Jack Black als Steve · ~$950M Box Office</div></div>
+  </div>
+</div>
+
+<div class="info-grid">
+  <div class="info-card"><div class="info-lbl" style="color:var(--green)">📅 RELEASE</div><div class="info-val">17. Mai 2009</div><div class="info-sub">Erste öffentliche Alpha</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--blue)">🏢 ENTWICKLER</div><div class="info-val">Mojang Studios</div><div class="info-sub">Microsoft (seit 2014)</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--yellow)">💰 KAUFPREIS</div><div class="info-val">$2.5 Milliarden</div><div class="info-sub">Microsoft → Nov 2014</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--orange)">🎬 MOVIE</div><div class="info-val">~$950M Box Office</div><div class="info-sub">A Minecraft Movie 2025</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--purple)">🎵 SOUNDTRACK</div><div class="info-val">C418 · Lena Raine</div><div class="info-sub">Sweden · Wet Hands · Pigstep</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--cyan)">🌐 YOUTUBE</div><div class="info-val">1+ Billionen Views</div><div class="info-sub">Meistgesehenes Spiel</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--red)">🔥 PEAK CCU</div><div class="info-val">~3.2 Mio</div><div class="info-sub">Concurrent Users täglich</div></div>
+  <div class="info-card"><div class="info-lbl" style="color:var(--pink)">📦 EDITIONS</div><div class="info-val">Java + Bedrock</div><div class="info-sub">Education · Pi · Legacy</div></div>
+</div>
+
+<div class="footer">
+  <div class="f-text">MC DASHBOARD · Daten: <a href="https://api.mcstatus.io" target="_blank">mcstatus.io</a> + <a href="https://api.mcsrvstat.us" target="_blank">mcsrvstat.us</a></div>
+  <div class="f-text">Auto-Refresh 90s · <span id="footerOnline">0</span>/<span id="footerTotal">0</span> online · <span id="footerTime">–</span></div>
+</div>
+
+</div>
+
+<!-- ADD SERVER MODAL -->
+
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-title">⚡ Server hinzufügen</div>
+    <div class="modal-sub">Füge einen eigenen Server zur Liste hinzu (wird lokal gespeichert)</div>
+    <div class="modal-field">
+      <label class="modal-label">Server Name</label>
+      <input class="modal-input" id="addName" type="text" placeholder="Mein Server" maxlength="40">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Server IP / Adresse</label>
+      <input class="modal-input" id="addIp" type="text" placeholder="play.meinserver.de" autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Region</label>
+      <select class="modal-select" id="addRegion">
+        <option value="de">🇩🇪 Deutschland</option>
+        <option value="eu">🇪🇺 Europa</option>
+        <option value="us">🇺🇸 USA</option>
+        <option value="global">🌍 Global</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Spielmodi (Mehrfachauswahl)</label>
+      <div class="modal-checkbox-row" id="addModes">
+        <div class="mode-chip" data-m="pvp">⚔ PvP</div>
+        <div class="mode-chip" data-m="factions">🏰 Factions</div>
+        <div class="mode-chip" data-m="bedwars">🛏 BedWars</div>
+        <div class="mode-chip" data-m="skywars">🏝 SkyWars</div>
+        <div class="mode-chip" data-m="skyblock">☁ SkyBlock</div>
+        <div class="mode-chip" data-m="minigames">🎯 MiniGames</div>
+        <div class="mode-chip" data-m="prison">⛓ Prison</div>
+        <div class="mode-chip" data-m="survival">🌳 Survival</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeAddModal()">ABBRECHEN</button>
+      <button class="modal-btn primary" onclick="addServerSave()">HINZUFÜGEN</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════════════════════
+// 50+ SERVERS - Top public servers worldwide (verified May 2026)
+// ════════════════════════════════════════════════════════════════
+const BUILTIN_SERVERS = [
+  // 🇩🇪 DE
+  {name:'GommeHD',ip:'gommehd.net',flag:'🇩🇪',country:'Deutschland',region:'de',tags:['BedWars','SkyWars','UHC'],modes:['bedwars','skywars','pvp'],founded:2013},
+  {name:'Timolia',ip:'timolia.de',flag:'🇩🇪',country:'Deutschland',region:'de',tags:['PvP','UHC','Jumpworld'],modes:['pvp','minigames'],founded:2013},
+  {name:'McPlayHD',ip:'mcplayhd.net',flag:'🇩🇪',country:'Deutschland',region:'de',tags:['MiniGames','FastBuilder'],modes:['minigames'],founded:2014},
+  {name:'BauSucht',ip:'play.bausucht.de',flag:'🇩🇪',country:'Deutschland',region:'de',tags:['Build','Creative'],modes:['minigames','survival'],founded:2018},
+  // Big Players (sortiert nach Größe)
+  {name:'Hypixel',ip:'mc.hypixel.net',flag:'🇺🇸',country:'USA',region:'us',tags:['BedWars','SkyBlock','SkyWars'],modes:['bedwars','skywars','skyblock','minigames'],founded:2013},
+  {name:'FadeCloud',ip:'hub.fadecloud.com',flag:'🌍',country:'Global',region:'global',tags:['SkyBlock','Prison','Factions'],modes:['skyblock','prison','factions'],founded:2017},
+  {name:'Minehut',ip:'play.minehut.com',flag:'🇺🇸',country:'USA',region:'us',tags:['Hosting','SMP'],modes:['survival','minigames'],founded:2016},
+  {name:'Wynncraft',ip:'play.wynncraft.com',flag:'🇬🇧',country:'UK',region:'eu',tags:['MMORPG','Adventure','Quest'],modes:['minigames'],founded:2013},
+  {name:'OPBlocks',ip:'mc.opblocks.com',flag:'🇺🇸',country:'USA',region:'us',tags:['SkyBlock','Prison','Factions'],modes:['skyblock','prison','factions'],founded:2018},
+  {name:'WildPrison',ip:'mc.wildprison.net',flag:'🌍',country:'Global',region:'global',tags:['Prison','SkyBlock'],modes:['prison','skyblock'],founded:2019},
+  {name:'MC Prison',ip:'play.mcprison.com',flag:'🌍',country:'Global',region:'global',tags:['Prison','SkyBlock','Factions'],modes:['prison','skyblock','factions'],founded:2014},
+  {name:'ManaCube',ip:'play.manacube.com',flag:'🇺🇸',country:'USA',region:'us',tags:['SkyBlock','Prison','Parkour'],modes:['skyblock','prison','minigames'],founded:2014},
+  {name:'CubeCraft',ip:'play.cubecraft.net',flag:'🇪🇺',country:'Europa',region:'eu',tags:['BedWars','EggWars','SkyWars'],modes:['bedwars','skywars','minigames'],founded:2013},
+  {name:'Pika Network',ip:'mc.pika-network.net',flag:'🇪🇺',country:'Europa',region:'eu',tags:['BedWars','SkyBlock','Practice'],modes:['bedwars','skyblock','factions'],founded:2014},
+  {name:'CraftRise',ip:'play.craftrise.com',flag:'🇹🇷',country:'Türkei',region:'eu',tags:['SkyWars','PvP','BedWars'],modes:['skywars','bedwars','pvp'],founded:2015},
+  {name:'MC Central',ip:'mccentral.org',flag:'🇺🇸',country:'USA',region:'us',tags:['MiniGames','Factions','Survival'],modes:['minigames','factions','survival'],founded:2013},
+  {name:'Jartex Network',ip:'play.jartex.fun',flag:'🇪🇺',country:'Europa',region:'eu',tags:['BedWars','SkyWars','SkyBlock'],modes:['bedwars','skywars','skyblock'],founded:2018},
+  {name:'EarthMC',ip:'play.earthmc.net',flag:'🌍',country:'Global',region:'global',tags:['Nations','Earth-Map','Roleplay'],modes:['survival','factions'],founded:2017},
+  {name:'Purple Prison',ip:'play.purpleprison.net',flag:'🇺🇸',country:'USA',region:'us',tags:['Prison','SkyBlock'],modes:['prison','skyblock'],founded:2015},
+  {name:'Minecadia',ip:'play.minecadia.com',flag:'🌍',country:'Global',region:'global',tags:['HCF','Factions','PvP'],modes:['factions','pvp'],founded:2019},
+  {name:'LemonCloud',ip:'play.lemoncloud.net',flag:'🌍',country:'Global',region:'global',tags:['Prison','Factions','SkyBlock'],modes:['prison','factions','skyblock'],founded:2017},
+  {name:'TulipSurvival',ip:'mc.tulipsurvival.com',flag:'🇺🇸',country:'USA',region:'us',tags:['Survival','SMP','Vanilla+'],modes:['survival'],founded:2020},
+  {name:'AppleMC',ip:'play.applemc.fun',flag:'🌍',country:'Global',region:'global',tags:['Prison','SkyBlock'],modes:['prison','skyblock'],founded:2016},
+  {name:'Extremecraft',ip:'mc.extremecraft.net',flag:'🇪🇺',country:'Europa',region:'eu',tags:['Factions','SkyBlock','Survival'],modes:['factions','skyblock','survival'],founded:2014},
+  {name:'LifeStealSMP',ip:'play.lifestealsmp.com',flag:'🇺🇸',country:'USA',region:'us',tags:['LifeSteal','SMP','PvP'],modes:['survival','pvp'],founded:2022},
+  {name:'Minemalia',ip:'play.minemalia.com',flag:'🌍',country:'Global',region:'global',tags:['SkyBlock','Survival'],modes:['skyblock','survival'],founded:2020},
+  {name:'Skyblock Network',ip:'play.skyblock.net',flag:'🌍',country:'Global',region:'global',tags:['SkyBlock'],modes:['skyblock'],founded:2014},
+  {name:'Skyblock.fun',ip:'skyblock.fun',flag:'🌍',country:'Global',region:'global',tags:['SkyBlock','Islands'],modes:['skyblock'],founded:2020},
+  {name:'MineWind',ip:'mc.minewind.com',flag:'🌍',country:'Global',region:'global',tags:['Anarchy','PvP','Survival'],modes:['survival','pvp'],founded:2018},
+  {name:'MineLand',ip:'play.mineland.net',flag:'🇪🇺',country:'Europa',region:'eu',tags:['MiniGames','BedWars','SkyWars'],modes:['minigames','bedwars','skywars'],founded:2018},
+  {name:'PVP.Land',ip:'pvp.land',flag:'🇺🇸',country:'USA',region:'us',tags:['PvP','KitPvP','Practice'],modes:['pvp'],founded:2014},
+  {name:'Performium',ip:'mc.performium.net',flag:'🌍',country:'Global',region:'global',tags:['Factions','KitPvP','SkyBlock'],modes:['factions','pvp','skyblock'],founded:2019},
+  {name:'Shotbow',ip:'play.shotbow.net',flag:'🇺🇸',country:'USA',region:'us',tags:['MiniGames','SMASH','Annihilation'],modes:['minigames','pvp'],founded:2011},
+  {name:'Snapcraft',ip:'play.snapcraft.net',flag:'🇪🇺',country:'Europa',region:'eu',tags:['Factions','SMP'],modes:['factions','survival'],founded:2014},
+  {name:'CraftAdia',ip:'play.craftadia.com',flag:'🌍',country:'Global',region:'global',tags:['SkyBlock','MMO'],modes:['skyblock'],founded:2019},
+  {name:'AlttD',ip:'play.alttd.com',flag:'🇪🇺',country:'Europa',region:'eu',tags:['SMP','Survival'],modes:['survival'],founded:2017},
+  {name:'Mineplex EU',ip:'eu.mineplex.com',flag:'🇪🇺',country:'Europa',region:'eu',tags:['MiniGames','Classic'],modes:['minigames'],founded:2013},
+  {name:'EndCrystal',ip:'play.endcrystal.me',flag:'🇪🇺',country:'Europa',region:'eu',tags:['Anarchy','SMP'],modes:['survival','pvp'],founded:2019},
+  {name:'CraftersLand',ip:'mc.craftersland.net',flag:'🇪🇺',country:'Europa',region:'eu',tags:['Factions','SkyBlock'],modes:['factions','skyblock'],founded:2014},
+  {name:'Mineverse',ip:'hub.mineverse.com',flag:'🇺🇸',country:'USA',region:'us',tags:['Factions','Survival'],modes:['factions','survival'],founded:2013},
+  {name:'CosmicPvP',ip:'play.cosmicpvp.com',flag:'🇺🇸',country:'USA',region:'us',tags:['Factions','HCF','KitPvP'],modes:['factions','pvp'],founded:2014},
+];
+
+const SALES = [
+  {y:2011,v:4,e:'1.0 Release'},{y:2012,v:16,e:''},{y:2013,v:35,e:''},{y:2014,v:54,e:'Microsoft kauft Mojang'},
+  {y:2015,v:70,e:''},{y:2016,v:106,e:'Bedrock Edition'},{y:2017,v:144,e:''},{y:2018,v:154,e:''},
+  {y:2019,v:176,e:'Java+Bedrock vereint'},{y:2020,v:238,e:'Covid-Boom'},{y:2021,v:238,e:''},
+  {y:2022,v:238,e:''},{y:2023,v:300,e:'300M Meilenstein'},{y:2024,v:300,e:''},
+];
+
+const MODES_META = {
+  pvp:{icon:'⚔',name:'PvP',color:'#ff1744'},
+  factions:{icon:'🏰',name:'Factions',color:'#d500f9'},
+  bedwars:{icon:'🛏',name:'BedWars',color:'#2979ff'},
+  skywars:{icon:'🏝',name:'SkyWars',color:'#00e5ff'},
+  skyblock:{icon:'☁',name:'SkyBlock',color:'#00e676'},
+  minigames:{icon:'🎯',name:'MiniGames',color:'#ff6d00'},
+  prison:{icon:'⛓',name:'Prison',color:'#ffd600'},
+  survival:{icon:'🌳',name:'Survival',color:'#69f0ae'},
+};
+
+const ACCENT = ["#00e676","#2979ff","#ffd600","#ff6d00","#d500f9","#00e5ff","#ff1744","#69f0ae","#f50057","#00b8d4"];
+
+// ─── State ──────────────────────────────────────────────────────
+let customServers = [];
+try { customServers = JSON.parse(localStorage.getItem('mcdash_custom') || '[]'); } catch (e) {}
+
+let serverData = [];
+let history = [];
+let filterRegion = 'all';
+let filterMode = 'all';
+let filterSort = 'players';
+let search = '';
+let isLoading = false;
+let expandedServer = null;
+let myServerHistory = [];
+let myLastChecked = null;
+let currentPage = 1;
+const PER_PAGE = 20;
+let addModalSelectedModes = new Set();
+
+try { myServerHistory = JSON.parse(localStorage.getItem('mcdash_history') || '[]'); } catch (e) { myServerHistory = []; }
+
+function getAllServers() {
+  return [...BUILTIN_SERVERS, ...customServers];
+}
+
+function initServerData() {
+  const all = getAllServers();
+  serverData = all.map(s => ({
+    ...s,
+    online: null, players: 0, max: 0, version: '?',
+    software: '', icon: null, ping: null, motd: '',
+    ipAddr: '', port: 25565, custom: customServers.includes(s),
+  }));
+  // Mark custom servers
+  serverData.forEach((s, i) => {
+    s.custom = i >= BUILTIN_SERVERS.length;
+  });
+}
+
+initServerData();
+
+// ════════════════════════════════════════════════════════════════
+// FETCH
+// ════════════════════════════════════════════════════════════════
+async function fetchServer(ip) {
+  const t0 = performance.now();
+  try {
+    const ctrl = new AbortController();
+    const tm = setTimeout(() => ctrl.abort(), 9000);
+    const r = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}`, { signal: ctrl.signal });
+    clearTimeout(tm);
+    if (r.ok) {
+      const d = await r.json();
+      const verRaw = d.version?.name_clean || "";
+      const m = verRaw.match(/(\d+\.\d+(\.\d+)?)/);
+      return {
+        online: !!d.online,
+        players: d.players?.online ?? 0,
+        max: d.players?.max ?? 0,
+        version: m ? m[1] : '?',
+        software: d.software || '',
+        icon: d.icon || null,
+        ping: Math.round(performance.now() - t0),
+        motd: (d.motd?.clean || '').replace(/\s+/g, ' ').trim().slice(0, 120),
+        ipAddr: d.ip_address || '',
+        port: d.port || 25565,
+      };
+    }
+  } catch (e) {}
+  try {
+    const ctrl = new AbortController();
+    const tm = setTimeout(() => ctrl.abort(), 9000);
+    const r = await fetch(`https://api.mcsrvstat.us/3/${ip}`, { signal: ctrl.signal });
+    clearTimeout(tm);
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    const m = (d.version || "").match(/(\d+\.\d+(\.\d+)?)/);
+    return {
+      online: !!d.online, players: d.players?.online ?? 0, max: d.players?.max ?? 0,
+      version: m ? m[1] : '?', software: d.software || '', icon: d.icon || null,
+      ping: Math.round(performance.now() - t0),
+      motd: ((d.motd?.clean ?? []).join(' ')).replace(/\s+/g, ' ').trim().slice(0, 120),
+      ipAddr: d.ip || '', port: d.port || 25565,
+    };
+  } catch (e) {
+    return { online: false, players: 0, max: 0, version: '?', software: '', icon: null, ping: null, motd: '', ipAddr: '', port: 25565, error: true };
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// REFRESH
+// ════════════════════════════════════════════════════════════════
+async function refreshAll() {
+  if (isLoading) return;
+  isLoading = true;
+  initServerData();
+  const btn = document.getElementById('btnRefresh');
+  btn.classList.add('spin');
+  btn.disabled = true;
+  document.getElementById('updateTime').textContent = `0/${serverData.length}`;
+  document.getElementById('errBanner').style.display = 'none';
+
+  let done = 0, errCount = 0;
+  await Promise.all(serverData.map(async (s, i) => {
+    const r = await fetchServer(s.ip);
+    serverData[i] = { ...serverData[i], ...r };
+    if (r.error) errCount++;
+    done++;
+    document.getElementById('updateTime').textContent = `${done}/${serverData.length}`;
+    renderList();
+    updateHero();
+    renderVersions();
+    renderSoftware();
+    renderGeo();
+    renderRanking();
+    renderGamemodes();
+  }));
+
+  if (errCount === serverData.length) {
+    const eb = document.getElementById('errBanner');
+    eb.style.display = 'flex';
+    eb.innerHTML = '⚠ Keine Verbindung zu APIs. Bitte Internet prüfen.';
+  }
+
+  const total = serverData.filter(s => s.online).reduce((a, s) => a + s.players, 0);
+  history.push({ t: new Date(), v: total });
+  if (history.length > 60) history.shift();
+  drawHistChart();
+  updateTicker();
+
+  const now = new Date();
+  document.getElementById('updateTime').textContent = now.toLocaleTimeString('de-DE');
+  document.getElementById('footerTime').textContent = now.toLocaleString('de-DE');
+
+  btn.classList.remove('spin');
+  btn.disabled = false;
+  isLoading = false;
+}
+
+// ════════════════════════════════════════════════════════════════
+// HERO
+// ════════════════════════════════════════════════════════════════
+function updateHero() {
+  const online = serverData.filter(s => s.online);
+  const total = online.reduce((a, s) => a + s.players, 0);
+  const totalMax = online.reduce((a, s) => a + (s.max > 0 ? s.max : 0), 0);
+  const avg = online.length ? Math.round(total / online.length) : 0;
+  const free = Math.max(0, totalMax - total);
+  const top = [...online].sort((a, b) => b.players - a.players)[0];
+  const fillPct = totalMax > 0 ? Math.round((total / totalMax) * 100) : 0;
+  const fastest = [...online].filter(s => s.ping).sort((a, b) => a.ping - b.ping)[0];
+
+  document.getElementById('hTotal').textContent = total.toLocaleString('de-DE');
+  document.getElementById('hOnlineCnt').textContent = `${online.length}/${serverData.length} Server online`;
+  document.getElementById('hTop').textContent = (top?.players ?? 0).toLocaleString('de-DE');
+  document.getElementById('hTopName').textContent = top?.name ?? '–';
+  document.getElementById('hAvgLoad').textContent = avg.toLocaleString('de-DE');
+  document.getElementById('hSlots').textContent = free > 9999 ? Math.round(free / 1000) + 'K' : free.toLocaleString('de-DE');
+  document.getElementById('hFillPct').textContent = fillPct + '%';
+  document.getElementById('hFastest').textContent = fastest?.name ?? '–';
+  document.getElementById('hFastestPing').textContent = fastest ? `${fastest.ping} ms` : '–';
+
+  document.getElementById('footerOnline').textContent = online.length;
+  document.getElementById('footerTotal').textContent = serverData.length;
+}
+
+// ════════════════════════════════════════════════════════════════
+// FILTERS
+// ════════════════════════════════════════════════════════════════
+function setFilter(type, value) {
+  if (type === 'region') {
+    filterRegion = value;
+    document.querySelectorAll('.f-btn[data-filter]').forEach(t => t.classList.toggle('active', t.dataset.filter === value));
+  } else if (type === 'mode') {
+    filterMode = value;
+    document.querySelectorAll('.f-btn[data-mode]').forEach(t => t.classList.toggle('active', t.dataset.mode === value));
+  } else if (type === 'sort') {
+    filterSort = value;
+    document.querySelectorAll('.f-btn[data-sort]').forEach(t => t.classList.toggle('active', t.dataset.sort === value));
+  }
+  currentPage = 1;
+  renderList();
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  search = e.target.value.toLowerCase().trim();
+  currentPage = 1;
+  renderList();
+});
+
+// ════════════════════════════════════════════════════════════════
+// SERVER LIST
+// ════════════════════════════════════════════════════════════════
+function getFilteredServers() {
+  let list = [...serverData];
+  if (filterRegion === 'de') list = list.filter(s => s.region === 'de');
+  else if (filterRegion === 'eu') list = list.filter(s => s.region === 'eu' || s.region === 'de');
+  else if (filterRegion === 'us') list = list.filter(s => s.region === 'us');
+  else if (filterRegion === 'online') list = list.filter(s => s.online);
+  else if (filterRegion === 'custom') list = list.filter(s => s.custom);
+
+  if (filterMode !== 'all') list = list.filter(s => (s.modes || []).includes(filterMode));
+
+  if (search) {
+    list = list.filter(s =>
+      s.name.toLowerCase().includes(search) ||
+      s.ip.toLowerCase().includes(search) ||
+      (s.tags || []).some(t => t.toLowerCase().includes(search)) ||
+      (s.country || '').toLowerCase().includes(search)
+    );
+  }
+
+  if (filterSort === 'players') list.sort((a, b) => (b.online ? b.players : -1) - (a.online ? a.players : -1));
+  else if (filterSort === 'players-asc') list.sort((a, b) => (a.online ? a.players : 99999) - (b.online ? b.players : 99999));
+  else if (filterSort === 'name') list.sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  else if (filterSort === 'ping') list.sort((a, b) => { if (!a.online) return 1; if (!b.online) return -1; return (a.ping || 9999) - (b.ping || 9999); });
+  else if (filterSort === 'founded-old') list.sort((a, b) => (a.founded || 9999) - (b.founded || 9999));
+  else if (filterSort === 'founded-new') list.sort((a, b) => (b.founded || 0) - (a.founded || 0));
+  else if (filterSort === 'capacity') list.sort((a, b) => (b.max || 0) - (a.max || 0));
+
+  return list;
+}
+
+function renderList() {
+  const filtered = getFilteredServers();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PER_PAGE;
+  const pageItems = filtered.slice(start, start + PER_PAGE);
+
+  document.getElementById('filterStats').textContent = `${total}/${serverData.length} Server`;
+  const onlineCnt = serverData.filter(s => s.online).length;
+  document.getElementById('serverBadge').textContent = `${onlineCnt}/${serverData.length} ONLINE`;
+
+  if (total === 0) {
+    document.getElementById('serverList').innerHTML = '<div class="no-data">Keine Server gefunden mit diesen Filtern</div>';
+    document.getElementById('pagination').style.display = 'none';
+    return;
+  }
+
+  const maxP = Math.max(...pageItems.map(s => s.players), 1);
+
+  document.getElementById('serverList').innerHTML = pageItems.map((s, idx) => {
+    const i = start + idx;
+    const pct = s.online ? Math.round((s.players / maxP) * 100) : 0;
+    const col = ACCENT[i % ACCENT.length];
+    const rankCls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : '';
+    const iconHtml = s.icon
+      ? `<img class="s-icon" src="${s.icon}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;s-icon-fb&quot;>${s.flag}</div>'">`
+      : `<div class="s-icon-fb">${s.flag}</div>`;
+    let playersHtml;
+    if (s.online === null) playersHtml = `<div class="s-players loading">…</div>`;
+    else if (s.online) playersHtml = `<div class="s-players">${s.players.toLocaleString('de-DE')}</div>`;
+    else playersHtml = `<div class="s-players off">OFF</div>`;
+    const dotCls = s.online === null ? 'loading' : s.online ? 'on' : 'off';
+    const tags = (s.tags || []).slice(0, 2).join(' · ');
+    const ver = s.online && s.version !== '?' ? ` · v${s.version}` : '';
+    const isExpanded = expandedServer === s.ip;
+    const customStar = s.custom ? '⭐ ' : '';
+
+    let detailHtml = '';
+    if (isExpanded) {
+      const age = new Date().getFullYear() - (s.founded || 2020);
+      detailHtml = s.online ? `
+        <div class="s-detail">
+          <div class="det-grid">
+            <div><div class="det-val">${s.players.toLocaleString('de-DE')} / ${s.max > 0 ? s.max.toLocaleString('de-DE') : '∞'}</div><div class="det-lbl">Spieler</div></div>
+            <div><div class="det-val" style="color:${s.ping < 100 ? '#00e676' : s.ping < 200 ? '#ffd600' : '#ff6d00'}">${s.ping ?? '?'} ms</div><div class="det-lbl">Ping</div></div>
+            <div><div class="det-val">v${s.version}</div><div class="det-lbl">Version</div></div>
+            ${s.software ? `<div><div class="det-val">${s.software}</div><div class="det-lbl">Software</div></div>` : ''}
+            <div><div class="det-val">${s.country}</div><div class="det-lbl">Region</div></div>
+            <div><div class="det-val">${s.max > 0 ? Math.round((s.players / s.max) * 100) + '%' : '–'}</div><div class="det-lbl">Auslastung</div></div>
+            <div><div class="det-val">${s.founded || '?'}</div><div class="det-lbl">Gegründet</div></div>
+            <div><div class="det-val">${age}j</div><div class="det-lbl">Alter</div></div>
+            <div><div class="det-val" style="font-size:11px">${(s.modes||[]).map(m=>MODES_META[m]?.icon||'').join(' ')}</div><div class="det-lbl">Modi</div></div>
+          </div>
+          ${s.motd ? `<div class="det-motd">${escapeHtml(s.motd)}</div>` : ''}
+          <div class="det-actions">
+            <div class="det-action" onclick="event.stopPropagation();copyText('${s.ip}',this)">📋 IP kopieren</div>
+            ${s.ipAddr ? `<div class="det-action" onclick="event.stopPropagation();copyText('${s.ipAddr}',this)">📋 ${s.ipAddr}</div>` : ''}
+            <div class="det-action" onclick="event.stopPropagation();useAsMyServer('${s.ip}')">⚡ Als Mein Server</div>
+            ${s.custom ? `<div class="det-action delete" onclick="event.stopPropagation();removeCustom('${s.ip}')">🗑 Entfernen</div>` : ''}
+          </div>
+        </div>
+      ` : `
+        <div class="s-detail">
+          <div class="det-grid">
+            <div><div class="det-val" style="color:var(--red)">OFFLINE</div><div class="det-lbl">Status</div></div>
+            <div><div class="det-val">${s.country}</div><div class="det-lbl">Region</div></div>
+            <div><div class="det-val">${s.founded || '?'}</div><div class="det-lbl">Gegründet</div></div>
+            <div><div class="det-val">${(s.tags||[]).join(', ') || '–'}</div><div class="det-lbl">Tags</div></div>
+          </div>
+          <div class="det-actions">
+            <div class="det-action" onclick="event.stopPropagation();copyText('${s.ip}',this)">📋 IP kopieren</div>
+            ${s.custom ? `<div class="det-action delete" onclick="event.stopPropagation();removeCustom('${s.ip}')">🗑 Entfernen</div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    return `<div class="s-row ${isExpanded ? 'expanded' : ''} ${s.custom ? 'custom' : ''}" style="animation-delay:${idx * 0.025}s" onclick="toggleServer('${s.ip}')">
+      <div class="s-rank ${rankCls}">#${i + 1}</div>
+      ${iconHtml}
+      <div class="s-info">
+        <div class="s-name-row"><span class="s-flag">${s.flag}</span><span class="s-name">${customStar}${s.name}</span></div>
+        <div class="s-tags">${tags}${ver}</div>
+      </div>
+      <div class="s-bars">
+        <div class="s-bar-bg"><div class="s-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${col}44,${col})"></div></div>
+        <div class="s-bar-num">${s.online && s.max > 0 ? pct + '%' : ''}</div>
+      </div>
+      ${playersHtml}
+      <div class="dot-status ${dotCls}"></div>
+      ${detailHtml}
+    </div>`;
+  }).join('');
+
+  if (totalPages > 1) {
+    document.getElementById('pagination').style.display = 'flex';
+    document.getElementById('pageInfo').textContent = `Seite ${currentPage}/${totalPages} · ${start + 1}-${Math.min(start + PER_PAGE, total)} von ${total}`;
+    let btnsHtml = `<button class="page-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Zurück</button>`;
+    const maxBtns = 5;
+    let from = Math.max(1, currentPage - 2);
+    let to = Math.min(totalPages, from + maxBtns - 1);
+    from = Math.max(1, to - maxBtns + 1);
+    for (let p = from; p <= to; p++) {
+      btnsHtml += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
+    }
+    btnsHtml += `<button class="page-btn" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Weiter →</button>`;
+    document.getElementById('pageBtns').innerHTML = btnsHtml;
+  } else {
+    document.getElementById('pagination').style.display = 'none';
+  }
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderList();
+  document.querySelector('.s-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleServer(ip) {
+  expandedServer = expandedServer === ip ? null : ip;
+  renderList();
+}
+
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function copyText(text, el) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (el) {
+      const orig = el.textContent;
+      el.classList.add('copied');
+      el.textContent = '✓ Kopiert';
+      setTimeout(() => { el.classList.remove('copied'); el.textContent = orig; }, 1500);
+    }
+  }).catch(() => {});
+}
+
+function useAsMyServer(ip) {
+  document.getElementById('myIp').value = ip;
+  expandedServer = null;
+  renderList();
+  document.getElementById('myIp').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => checkMyServer(), 300);
+}
+
+function removeCustom(ip) {
+  if (!confirm('Server wirklich aus deiner Liste entfernen?')) return;
+  customServers = customServers.filter(s => s.ip !== ip);
+  try { localStorage.setItem('mcdash_custom', JSON.stringify(customServers)); } catch (e) {}
+  expandedServer = null;
+  initServerData();
+  refreshAll();
+}
+
+// ════════════════════════════════════════════════════════════════
+// ADD MODAL
+// ════════════════════════════════════════════════════════════════
+function openAddModal() {
+  document.getElementById('addModal').classList.add('show');
+  document.getElementById('addName').value = '';
+  document.getElementById('addIp').value = '';
+  document.getElementById('addRegion').value = 'de';
+  addModalSelectedModes.clear();
+  document.querySelectorAll('#addModes .mode-chip').forEach(c => c.classList.remove('active'));
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('show');
+}
+
+document.querySelectorAll('#addModes .mode-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const m = chip.dataset.m;
+    if (addModalSelectedModes.has(m)) {
+      addModalSelectedModes.delete(m);
+      chip.classList.remove('active');
+    } else {
+      addModalSelectedModes.add(m);
+      chip.classList.add('active');
+    }
+  });
+});
+
+function addServerSave() {
+  const name = document.getElementById('addName').value.trim();
+  const ip = document.getElementById('addIp').value.trim();
+  const region = document.getElementById('addRegion').value;
+  const modes = [...addModalSelectedModes];
+
+  if (!name || !ip) {
+    alert('Bitte Name und IP eingeben');
+    return;
+  }
+  if (getAllServers().some(s => s.ip === ip)) {
+    alert('Server mit dieser IP existiert bereits');
+    return;
+  }
+
+  const flagMap = { de: '🇩🇪', eu: '🇪🇺', us: '🇺🇸', global: '🌍' };
+  const countryMap = { de: 'Deutschland', eu: 'Europa', us: 'USA', global: 'Global' };
+
+  const newServer = {
+    name, ip, region,
+    flag: flagMap[region],
+    country: countryMap[region],
+    tags: modes.map(m => MODES_META[m]?.name || m).slice(0, 3),
+    modes: modes.length ? modes : ['survival'],
+    founded: new Date().getFullYear(),
+  };
+
+  customServers.push(newServer);
+  try { localStorage.setItem('mcdash_custom', JSON.stringify(customServers)); } catch (e) {}
+
+  closeAddModal();
+  initServerData();
+  refreshAll();
+}
+
+document.getElementById('addModal').addEventListener('click', e => {
+  if (e.target.id === 'addModal') closeAddModal();
+});
+
+// ════════════════════════════════════════════════════════════════
+// VERSIONS / SOFTWARE / GEO / RANK / GAMEMODES
+// ════════════════════════════════════════════════════════════════
+function renderVersions() {
+  const map = {};
+  serverData.forEach(s => {
+    if (!s.online || s.version === '?') return;
+    const v = s.version.match(/(\d+\.\d+)/)?.[1] || s.version;
+    map[v] = (map[v] ?? 0) + s.players;
+  });
+  const rows = Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  if (!rows.length) { document.getElementById('verList').innerHTML = '<div class="no-data">Lade…</div>'; return; }
+  const total = rows.reduce((a, [, n]) => a + n, 0) || 1;
+  document.getElementById('verList').innerHTML = rows.map(([v, n], i) => {
+    const pct = Math.round((n / total) * 100);
+    return `<div class="kv-row">
+      <div class="kv-name">${v}</div>
+      <div class="kv-bg"><div class="kv-fill" style="width:${pct}%;background:${ACCENT[i]};box-shadow:0 0 5px ${ACCENT[i]}55"></div></div>
+      <div class="kv-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSoftware() {
+  const map = {};
+  serverData.forEach(s => { if (!s.online) return; const sw = s.software || 'Unbekannt'; map[sw] = (map[sw] ?? 0) + 1; });
+  const rows = Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  if (!rows.length) { document.getElementById('swList').innerHTML = '<div class="no-data">Keine Daten</div>'; return; }
+  const total = rows.reduce((a, [, n]) => a + n, 0) || 1;
+  document.getElementById('swList').innerHTML = rows.map(([sw, n], i) => {
+    const pct = Math.round((n / total) * 100);
+    return `<div class="kv-row">
+      <div class="kv-name">${sw}</div>
+      <div class="kv-bg"><div class="kv-fill" style="width:${pct}%;background:${ACCENT[(i + 2) % ACCENT.length]}"></div></div>
+      <div class="kv-cnt">${n}×</div>
+    </div>`;
+  }).join('');
+}
+
+function renderGeo() {
+  const map = {};
+  serverData.forEach(s => {
+    if (!s.online) return;
+    const k = `${s.flag} ${s.country}`;
+    if (!map[k]) map[k] = { players: 0, count: 0 };
+    map[k].players += s.players;
+    map[k].count += 1;
+  });
+  const rows = Object.entries(map).sort((a, b) => b[1].players - a[1].players);
+  if (!rows.length) { document.getElementById('geoList').innerHTML = '<div class="no-data">Lade…</div>'; return; }
+  const max = rows[0][1].players || 1;
+  document.getElementById('geoList').innerHTML = rows.map(([k, v]) => {
+    const [flag, ...names] = k.split(' ');
+    const name = names.join(' ');
+    const pct = (v.players / max) * 100;
+    return `<div class="geo-row">
+      <span class="geo-flag">${flag}</span>
+      <span class="geo-name">${name} <span style="color:var(--text3)">(${v.count})</span></span>
+      <div class="geo-bar"><div class="geo-bar-fill" style="width:${pct}%"></div></div>
+      <span class="geo-cnt">${v.players.toLocaleString('de-DE')}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderRanking() {
+  const top = [...serverData].filter(s => s.online).sort((a, b) => b.players - a.players).slice(0, 10);
+  if (!top.length) { document.getElementById('rankList').innerHTML = '<div class="no-data">Lade…</div>'; return; }
+  document.getElementById('rankList').innerHTML = top.map((s, i) => {
+    const rankCls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : '';
+    return `<div class="rank-item">
+      <span class="rank-num ${rankCls}">#${i + 1}</span>
+      <span class="rank-name">${s.flag} ${s.name}</span>
+      <span class="rank-val">${s.players.toLocaleString('de-DE')}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderGamemodes() {
+  const map = {};
+  Object.keys(MODES_META).forEach(m => { map[m] = { servers: 0, players: 0 }; });
+  serverData.forEach(s => {
+    if (!s.online) return;
+    (s.modes || []).forEach(m => { if (map[m]) { map[m].servers += 1; map[m].players += s.players; } });
+  });
+  document.getElementById('gmGrid').innerHTML = Object.entries(map).map(([k, v]) => {
+    const meta = MODES_META[k];
+    return `<div class="gm-tile" style="border-color:${meta.color}33">
+      <div class="gm-icon">${meta.icon}</div>
+      <div class="gm-name">${meta.name}</div>
+      <div class="gm-cnt" style="color:${meta.color}">${v.players.toLocaleString('de-DE')}</div>
+      <div class="gm-sub">${v.servers} Server</div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// TICKER
+// ════════════════════════════════════════════════════════════════
+function updateTicker() {
+  const total = serverData.filter(s => s.online).reduce((a, s) => a + s.players, 0);
+  const online = serverData.filter(s => s.online);
+  const top = [...online].sort((a, b) => b.players - a.players)[0];
+  const fastest = [...online].filter(s => s.ping).sort((a, b) => a.ping - b.ping)[0];
+  const totalMax = online.reduce((a, s) => a + (s.max > 0 ? s.max : 0), 0);
+  const fillPct = totalMax > 0 ? Math.round((total / totalMax) * 100) : 0;
+
+  const items = [
+    `⛏ Live Spieler: <strong>${total.toLocaleString('de-DE')}</strong>`,
+    `🏆 Top: <strong>${top?.name ?? '–'}</strong> (${(top?.players ?? 0).toLocaleString('de-DE')})`,
+    `📡 ${online.length}/${serverData.length} Server erreichbar`,
+    `⚡ Schnellster: <strong>${fastest?.name ?? '–'}</strong> (${fastest?.ping ?? '?'}ms)`,
+    `📊 Auslastung: <strong>${fillPct}%</strong> der Slots`,
+    `🇩🇪 Top DE: <strong>GommeHD</strong> & <strong>Timolia</strong>`,
+    `💎 MC Verkäufe: <strong>300M+</strong> Exemplare`,
+    `🌍 Global täglich aktiv: <strong>~3.2 Mio</strong> Spieler`,
+    `🎬 Minecraft Movie: <strong>$950M</strong> Box Office`,
+    `💰 Microsoft → Mojang für <strong>$2.5 Mrd</strong> (2014)`,
+    `⭐ Eigene Server: <strong>${customServers.length}</strong> hinzugefügt`,
+    `🔄 Auto-Refresh alle 90 Sek`,
+  ];
+  document.getElementById('ticker').innerHTML = [...items, ...items].map(t => `<span class="ticker-item">${t} &nbsp;·&nbsp;</span>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// MY SERVER
+// ════════════════════════════════════════════════════════════════
+async function checkMyServer() {
+  const ip = document.getElementById('myIp').value.trim();
+  if (!ip) return;
+  const btn = document.getElementById('btnCheck');
+  btn.disabled = true; btn.textContent = 'PRÜFE…';
+  document.getElementById('myStats').innerHTML = '<div class="my-empty">Server wird geprüft…</div>';
+  document.getElementById('btnAddMy').style.display = 'none';
+
+  const d = await fetchServer(ip);
+  myLastChecked = ip;
+
+  if (!myServerHistory.includes(ip)) {
+    myServerHistory.unshift(ip);
+    myServerHistory = myServerHistory.slice(0, 5);
+    try { localStorage.setItem('mcdash_history', JSON.stringify(myServerHistory)); } catch (e) {}
+  }
+  renderMyHistory();
+
+  let html = '';
+  if (d.online) {
+    const pct = d.max > 0 ? Math.round((d.players / d.max) * 100) : 0;
+    html = `
+      <div class="ms-stat"><span class="ms-val">${d.players.toLocaleString('de-DE')}</span><span class="ms-lbl">Spieler</span></div>
+      <div class="ms-stat"><span class="ms-val">${d.max > 0 ? d.max.toLocaleString('de-DE') : '∞'}</span><span class="ms-lbl">Max</span></div>
+      <div class="ms-stat"><span class="ms-val" style="color:${d.ping < 100 ? 'var(--green)' : d.ping < 200 ? 'var(--yellow)' : 'var(--orange)'}">${d.ping ?? '–'}</span><span class="ms-lbl">ms Ping</span></div>
+      <div class="ms-stat"><span class="ms-val small">${d.version !== '?' ? 'v' + d.version : '–'}</span><span class="ms-lbl">Version</span></div>
+      <div class="ms-stat"><span class="ms-val small" style="color:var(--purple)">${pct}%</span><span class="ms-lbl">Auslastung</span></div>
+      ${d.software ? `<div class="ms-stat"><span class="ms-val small" style="color:var(--cyan);font-size:11px">${d.software}</span><span class="ms-lbl">Software</span></div>` : ''}
+      <div class="ms-stat"><span class="ms-val small" style="color:var(--green)">✓ ONLINE</span><span class="ms-lbl">Status</span></div>
+    `;
+    // Show "add to list" button if not yet in list
+    if (!getAllServers().some(s => s.ip === ip)) {
+      document.getElementById('btnAddMy').style.display = 'inline-block';
+    }
+  } else {
+    html = `<div class="ms-stat"><span class="ms-val off">OFFLINE</span><span class="ms-lbl">Status</span></div>
+      <div class="my-empty" style="margin-left:10px">Server nicht erreichbar oder existiert nicht</div>`;
+  }
+  document.getElementById('myStats').innerHTML = html;
+  btn.disabled = false; btn.textContent = 'PRÜFEN';
+}
+
+function addMyServerToList() {
+  if (!myLastChecked) return;
+  document.getElementById('addIp').value = myLastChecked;
+  document.getElementById('addName').value = myLastChecked.split('.')[0];
+  openAddModal();
+}
+
+function renderMyHistory() {
+  const row = document.getElementById('myHistRow');
+  if (!myServerHistory.length) { row.style.display = 'none'; return; }
+  row.style.display = 'flex';
+  row.innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--text3);align-self:center;letter-spacing:1.5px">VERLAUF:</span>' +
+    myServerHistory.map(ip => `<span class="my-hist-tag" onclick="loadHistory('${ip}')">${ip}<span class="x" onclick="event.stopPropagation();removeHistory('${ip}')">×</span></span>`).join('');
+}
+
+function loadHistory(ip) { document.getElementById('myIp').value = ip; checkMyServer(); }
+function removeHistory(ip) { myServerHistory = myServerHistory.filter(x => x !== ip); try { localStorage.setItem('mcdash_history', JSON.stringify(myServerHistory)); } catch (e) {} renderMyHistory(); }
+
+document.getElementById('myIp').addEventListener('keydown', e => { if (e.key === 'Enter') checkMyServer(); });
+
+// ════════════════════════════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════════════════════════════
+function drawHistChart() {
+  const total = serverData.filter(s => s.online).reduce((a, s) => a + s.players, 0);
+  document.getElementById('histNow').textContent = total.toLocaleString('de-DE');
+  const canvas = document.getElementById('histChart');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth;
+  const H = 80;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+  if (history.length < 2) {
+    document.getElementById('histStart').textContent = '–';
+    document.getElementById('histPeak').textContent = '–';
+    return;
+  }
+  const peak = Math.max(...history.map(p => p.v));
+  document.getElementById('histStart').textContent = history[0].t.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('histPeak').textContent = `Peak: ${peak.toLocaleString('de-DE')}`;
+  const values = history.map(p => p.v);
+  const min = Math.min(...values), max = Math.max(...values, min + 1);
+  const range = max - min || 1;
+  const pad = { t: 8, b: 6, l: 6, r: 6 };
+  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+  const xOf = i => pad.l + (i / Math.max(values.length - 1, 1)) * gW;
+  const yOf = v => pad.t + gH - ((v - min) / range) * gH;
+  const color = '#00e676';
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + gH);
+  grad.addColorStop(0, color + '55'); grad.addColorStop(1, color + '00');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.moveTo(xOf(0), pad.t + gH);
+  values.forEach((v, i) => ctx.lineTo(xOf(i), yOf(v)));
+  ctx.lineTo(xOf(values.length - 1), pad.t + gH); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+  ctx.shadowColor = color; ctx.shadowBlur = 6;
+  ctx.beginPath();
+  values.forEach((v, i) => i === 0 ? ctx.moveTo(xOf(i), yOf(v)) : ctx.lineTo(xOf(i), yOf(v)));
+  ctx.stroke(); ctx.shadowBlur = 0;
+  const last = values.length - 1;
+  ctx.fillStyle = '#fff'; ctx.shadowColor = color; ctx.shadowBlur = 10;
+  ctx.beginPath(); ctx.arc(xOf(last), yOf(values[last]), 4, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawSalesChart() {
+  const canvas = document.getElementById('salesChart');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth;
+  const H = 180;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+  const pad = { t: 30, b: 35, l: 40, r: 12 };
+  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+  const max = 320, min = 0, range = max - min;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (gH / 4) * i;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + gW, y); ctx.stroke();
+    const val = Math.round(max - (range / 4) * i);
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '10px JetBrains Mono,monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(val + 'M', pad.l - 6, y + 3);
+  }
+  const bW = gW / SALES.length;
+  SALES.forEach((d, i) => {
+    const bH = ((d.v - min) / range) * gH;
+    const x = pad.l + i * bW + 3;
+    const y = pad.t + gH - bH;
+    const w = bW - 6;
+    const frac = i / (SALES.length - 1);
+    const col = `hsl(${142 - frac * 30},100%,${48 + frac * 8}%)`;
+    ctx.fillStyle = col;
+    ctx.shadowColor = col; ctx.shadowBlur = 6;
+    const r = 4;
+    ctx.beginPath();
+    ctx.moveTo(x, y + r); ctx.arcTo(x, y, x + r, y, r);
+    ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + bH); ctx.lineTo(x, y + bH); ctx.closePath();
+    ctx.fill(); ctx.shadowBlur = 0;
+    if (d.e) {
+      ctx.strokeStyle = 'rgba(255,214,0,0.3)';
+      ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.moveTo(x + w / 2, pad.t - 4); ctx.lineTo(x + w / 2, y - 4); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(255,214,0,0.85)';
+      ctx.font = 'bold 8.5px JetBrains Mono,monospace';
+      ctx.textAlign = 'center';
+      const lbl = d.e.length > 18 ? d.e.slice(0, 16) + '…' : d.e;
+      ctx.fillText(lbl, x + w / 2, pad.t - 8);
+    }
+    if (d.v >= 200 || i === SALES.length - 1 || d.e) {
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10px JetBrains Mono,monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(d.v + 'M', x + w / 2, y - 5);
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.font = '9.5px JetBrains Mono,monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText("'" + (d.y % 100), x + w / 2, H - 18);
+  });
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '9px JetBrains Mono,monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Jahre · Kumulierte Verkäufe in Millionen Exemplaren', W / 2, H - 4);
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  drawSalesChart();
+  drawHistChart();
+  renderList();
+  updateTicker();
+  renderMyHistory();
+  refreshAll();
+  setInterval(refreshAll, 90000);
+});
+
+window.addEventListener('resize', () => {
+  drawSalesChart();
+  drawHistChart();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAddModal();
+});
+</script>
+
+</body>
+</html>
